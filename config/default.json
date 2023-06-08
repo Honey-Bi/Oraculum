@@ -1,0 +1,4 @@
+{
+    "mongoURI" : "mongodb+srv://root:1234@test.rr1mfm9.mongodb.net/?retryWrites=true&w=majority",
+    "jwtSecretKey": "eyJhbGciOiJIUzI1NiJ9.eyJSb2xlIjoiQWRtaW4iLCJJc3N1ZXIiOiJJc3N1ZXIiLCJVc2VybmFtZSI6IkphdmFJblVzZSIsImV4cCI6MTY4NjE4NTEyNywiaWF0IjoxNjg2MTg1MTI3fQ.HxQjQfP0RzpAm0X_YTxsCJ4wzMC7_jdFhWsCYg0Wi_E"
+}
