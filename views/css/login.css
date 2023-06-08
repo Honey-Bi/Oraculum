@@ -1,0 +1,9 @@
+.err-text {
+    width: 100%;
+    text-align: center;
+    line-height: 18px;
+    /* color: #ff3f3f; */
+    color: #343a40;
+    font-size: 14px;
+    margin: 0;
+}
