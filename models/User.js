@@ -2,7 +2,7 @@ const mongoose = require("mongoose"); // mongoose 불러오기
 
 // Schema 생성
 const UserSchema = new mongoose.Schema({
-  nick: {
+  name: {
     type: String,
     required: true,
     unique: true,
@@ -16,6 +16,10 @@ const UserSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
+  created : {
+    type : Date,
+    default : Date.now
+} 
 });
 
 // model을 export 해주기
