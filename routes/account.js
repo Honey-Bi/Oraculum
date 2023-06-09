@@ -1,13 +1,14 @@
 const router = require('express').Router();
+const { auth } = require('../middleware/userValidation');
+const userStatus = require('../middleware/userStatus');
 const bcrypt = require("bcryptjs");
 const User = require('../models/User'); 
 const jwt = require('jsonwebtoken');
 const config = require('../config/default.json');
 const SECRET_KEY = config.jwtSecretKey;
 
-
 router.get('/login', (req, res) => {
-    res.render('./account/login');
+    res.render('./account/login', { title: 'Login', isLogin: userStatus.isLogin(req) });
 });
 
 router.post("/login-confirm", async (req, res) => {
@@ -45,7 +46,7 @@ router.post("/login-confirm", async (req, res) => {
                 SECRET_KEY,        // secret key 값
                 { expiresIn: "1h", },// token의 유효시간을 1시간으로 설정
             );
-
+            req.session.token = token;
             // res.status(statusCode.OK).send(util.success(statusCode.OK, responseMsg.LOGIN_SUCCESS, {
             //     /* 생성된 Token을 클라이언트에게 Response */
             //      token: jwtToken.token                
@@ -65,7 +66,7 @@ router.post("/login-confirm", async (req, res) => {
 });
 
 router.get('/register', (req, res) => {
-    res.render('./account/register');
+    res.render('./account/register', { title: 'Sign Up', isLogin: userStatus.isLogin(req) });
 });
 
 router.post('/exist-confirm', async (req, res) => {
@@ -117,6 +118,28 @@ router.post("/register-confirm", async (req, res) => {
         console.error(error.message);
         res.status(500).send("Server Error");
     }
+});
+
+router.get('/logout', async (req, res) => {
+    var session = req.session;
+    try {
+        if (session.token) { //세션정보가 존재하는 경우
+            await req.session.destroy(function (err) {
+                if (err)
+                    console.log(err)
+                else {
+                  res.redirect('/');
+                }
+            })
+        }
+    }
+    catch (e) {
+        console.log(e)
+    }
+})
+
+router.get('/mypage', auth, (req, res) => {
+    res.render('./account/mypage', { title: 'My page', isLogin: userStatus.isLogin(req) });
 });
 
 module.exports = router;
