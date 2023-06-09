@@ -32,9 +32,9 @@ $('#loginForm').submit(function(){
         dataType: 'json',
         success: function(result){
             console.log("login");
-            // $.cookie('token', result.token);
-            document.cookie = "token="+result.token;
-            location.replace('/main');
+            // sessionStorage.removeItem('token');
+            // document.cookie = "token="+result.token;
+            location.href = '/';
             return;
         },
         error: function(error) {
