@@ -1,11 +1,9 @@
 const router = require('express').Router();
 const bcrypt = require("bcryptjs");
 const User = require('../models/User'); 
-const { auth } = require('../middleware/userValidation');
 const jwt = require('jsonwebtoken');
 const config = require('../config/default.json');
 const SECRET_KEY = config.jwtSecretKey;
-
 
 
 router.get('/login', (req, res) => {
@@ -70,10 +68,15 @@ router.get('/register', (req, res) => {
     res.render('./account/register');
 });
 
-router.post('exist-confirm', async (req, res) => {
+router.post('/exist-confirm', async (req, res) => {
     try {
         let input = req.body.input;
-        let user = await User.findOne({ input }) 
+        var user;
+        if (input.includes('@')) {
+            user = await User.findOne({ email: input }) ;
+        } else {
+            user = await User.findOne({ name: input }) ;
+        }
         if (user) {
             res.send(true);
         } else {
