@@ -19,7 +19,11 @@ const UserSchema = new mongoose.Schema({
   created : {
     type : Date,
     default : Date.now
-} 
+  },
+  deathCount: {
+    type: Number,
+    default: 0
+  }
 });
 
 // model을 export 해주기
