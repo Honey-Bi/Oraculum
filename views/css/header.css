@@ -16,6 +16,9 @@ body {
     text-align: center;
     color: #fff;
 }
+.logo > a{
+    color: #fff;
+}
 header {
     margin-bottom: 2em;
 
@@ -49,6 +52,7 @@ nav {
     border-bottom: 0.25rem solid transparent;
 }
 .nav-link:hover {
+    color: #fff;
     border-bottom-color: rgba(255, 255, 255, .25);
 }
 .nav-link.active {
@@ -65,4 +69,7 @@ nav {
     nav {
         float: right;
     }
+}
+.text-end {
+    float: right;
 }
