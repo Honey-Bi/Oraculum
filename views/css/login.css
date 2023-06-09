@@ -17,6 +17,10 @@
     margin: 0;
     display: none;
 }
+button:disabled {
+    cursor: not-allowed;
+    pointer-events: all !important;
+  }
 .custom-dupilication-button {
     position: absolute;
     right: 3px; 
