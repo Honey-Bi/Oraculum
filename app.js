@@ -17,10 +17,11 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(cookieParser());
 
-
-
 const account = require('./routes/account');
+const main = require('./routes/main');
+
 app.use('/account', account);
+app.use('/main', main);
 
 app.get('/', (req, res) => {
   res.render('', {title: 'ORACULUM'});
