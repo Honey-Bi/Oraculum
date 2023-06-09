@@ -3,7 +3,6 @@
 <head>
     <%- include('./head'); %>
     <link rel="stylesheet" href="/css/index.css">
-    <title><%= title %></title>
 </head>
 <body>
     <div class="container">
@@ -12,7 +11,11 @@
             <h1>Oraculum</h1>
             <p class="lead">Cover is a one-page template for building simple and beautiful home pages. Download, edit the text, and add your own fullscreen background photo to make it your own.</p>
             <p class="lead">
-                <a href="./account/login" class="btn btn-lg btn-light fw-bold border-white bg-white">Learn more</a>
+                <% if(isLogin) { %>
+                    <a href="/main" class="btn btn-lg btn-light fw-bold border-white bg-white">Start</a>
+                <% } else { %>
+                    <a href="/account/login" class="btn btn-lg btn-light fw-bold border-white bg-white">Login</a>
+                <% } %>
             </p>
         </main>
         <div class="mt-auto"></div>
