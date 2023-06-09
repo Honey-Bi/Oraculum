@@ -1,10 +1,16 @@
 <header>
     <div>
-        <h3 class="logo">Oraculum</h3>
-        <nav>
-            <a class="nav-link active" aria-current="page" href="#">Home</a>
-            <a class="nav-link" href="#">Features</a>
-            <a class="nav-link" href="#">Contact</a>
-        </nav>
+        <h3 class="logo"><a href="/">Oraculum</a></h3>
+        <div class="text-end">
+            <nav class="nav nav-masthead justify-content-center float-md-end">
+                <% if(isLogin) { %>
+                    <a class="nav-link fw-bold py-1 px-0" href="/account/mypage">My page</a>
+                    <a class="nav-link fw-bold py-1 px-0" href="/account/logout">Sign-out</a>
+                <% } else { %>
+                    <a class="nav-link fw-bold py-1 px-0" href="/account/login">Login</a>
+                    <a class="nav-link fw-bold py-1 px-0" href="/account/register">Sign-up</a>
+                <% } %>
+            </nav>        
+        </div>
     </div>
 </header>
