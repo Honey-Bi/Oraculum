@@ -3,15 +3,24 @@
 <head>
     <%- include('./head'); %>   
     <link rel="stylesheet" href="/css/main.css">
-    <title>Main</title>
 </head>
 <body>
     <div class="container h-100">
         <%- include('./header'); %>
+        <h3><%= //userName %></h3>
+        <div class="row d-flex justify-content-center align-items-center h-100">
+            <div class="col-10 col-md-8 col-lg-8 col-xl-8">
+                <div class="card" style="height: 6rem;">
+                </div>
+            </div>
+        </div>
+
+        <button class="btn">left</button>
+        <button class="btn">right</button>
     </div>
     <footer>
         <%- include('./script'); %>
         <script src="/js/main.js"></script>
     </footer>
 </body>
-</html>
+</html> 
