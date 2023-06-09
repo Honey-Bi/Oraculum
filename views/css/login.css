@@ -7,3 +7,47 @@
     font-size: 14px;
     margin: 0;
 }
+.err-text-register {
+    width: 100%;
+    text-align: center;
+    line-height: 18px;
+    /* color: #ff3f3f; */
+    color: #343a40;
+    font-size: 14px;
+    margin: 0;
+    display: none;
+}
+.custom-dupilication-button {
+    position: absolute;
+    right: 3px; 
+    top: 3px;
+    bottom: 3px;
+    outline: none;
+    margin: 0;
+    padding: 0 10px;
+    border-radius: 0.3em;
+    z-index: 2;
+    height: calc(1.5em + 1rem + 2px);
+}
+.custom-dupilication-button:focus {
+    outline: none !important;
+}
+.name {
+    position: relative;
+}
+#typeNameX {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: calc(100% - 93px);
+    height: calc(1.5em + 1rem + 2px);
+    padding: 0.5rem 1rem;
+    font-size: 1.25rem;
+    line-height: 1.5;
+    border-radius: 0.3rem;
+    border: 0;
+    
+}
+input:focus {
+    outline: none !important;
+}

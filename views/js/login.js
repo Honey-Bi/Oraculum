@@ -9,15 +9,15 @@ $('#loginForm').submit(function(){
         inputPw = $('#typePasswordX').val();
 
     if (!inputId) {
-        $('#typeEmailX').focus();
         $('.err-text').text("아이디를 입력해주세요");
         $('.err-text').css('color', '#ff3f3f');
+        $('#typeEmailX').focus();
         return;
     }
     if (!inputPw) {
-        $('#typePasswordX').focus();
         $('.err-text').text("비밀번호를를 입력해주세요");
         $('.err-text').css('color', '#ff3f3f');
+        $('#typePasswordX').focus();
         return;
     }
 
@@ -34,7 +34,7 @@ $('#loginForm').submit(function(){
             console.log("login");
             // $.cookie('token', result.token);
             document.cookie = "token="+result.token;
-            // location.replace('/main');
+            location.replace('/main');
             return;
         },
         error: function(error) {
