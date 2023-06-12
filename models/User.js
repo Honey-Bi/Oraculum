@@ -23,6 +23,10 @@ const UserSchema = new mongoose.Schema({
   deathCount: {
     type: Number,
     default: 0
+  },
+  access: {
+    type: Number,
+    default: 0
   }
 });
 
