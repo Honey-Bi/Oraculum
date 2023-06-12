@@ -1,0 +1,30 @@
+.a {
+    width: 100%;
+    height: 9rem;
+    border: 1px solid;
+} 
+.slider {
+    padding: 0;
+}
+.answer {
+    position: absolute;
+    width: calc(45% - 30px);
+    top: 50%;
+    padding: 0.5rem 1rem;
+    color: #000;
+    background-color: #fff;
+    opacity: 0;
+}
+.answer-left {
+    text-align: right;
+    border-radius: 0 40px 40px 0;
+    left: 0;
+}
+.answer-right {
+    right: 0;
+    text-align: left;
+    border-radius: 40px 0 0 40px;
+}
+body {
+    overflow: hidden;
+}
