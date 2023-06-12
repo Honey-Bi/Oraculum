@@ -4,7 +4,7 @@ var maxWidth = $(window).width() * 12 / 100; // 화면 크기의 12%
 $('.a').draggable({
     axis: "x", //좌우로만
     scroll: false,
-    // containment : 'window', //화면 밖으로 이동 가능
+    // containment : '', //화면 밖으로 이동 가능
     drag : function(){
         var pos = $('.a').position(); // 드래그 하는 이미지의 위치값 알아내기
 

@@ -12,7 +12,8 @@ const SECRET_KEY = config.jwtSecretKey;
 // });
 
 
-router.get('/', (req, res) => {
+router.get('/', auth, (req, res) => {
+
     res.render('./main', {title: 'main', isLogin: true,});
 });
 

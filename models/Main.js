@@ -2,8 +2,14 @@ const mongoose = require("mongoose"); // mongoose 불러오기
 
 // Schema 생성
 const MainSchema = new mongoose.Schema({
-    userId: new mongoose.Types.ObjectId,
-    nowEvent: new mongoose.Types.ObjectId,
+    userId: {
+        type: Schema.Types.ObjectId,
+        ref: 'user'
+    },
+    nowEvent: {
+        type: Schema.Types.ObjectId,
+        ref: 'event'
+    },
     fuel: {
         type: Number,
         default: 50,
@@ -36,22 +42,20 @@ const MainSchema = new mongoose.Schema({
 });
 
 const EventSchema = new mongoose.Schema({
-    contents: {
-        type: String,
-        required: true
-    },
-    r_text: {
-        type: String,
-        required: true,
-    },
-    l_text: {
-        type: String,
-        required: true,
-    },
+    title: String,
+    contents: String,
+    r_text: String,
+    l_text: String,
     r_result: [Number],
-    l_result: [Number]
+    l_result: [Number],
+    next_event: {
+        type: Schema.Types.ObjectId,
+        ref: 'event',
+        default: null
+    },
 });
 
 // model을 export 해주기
 module.exports = Main = mongoose.model("main", MainSchema);
 module.exports = mongoose.model("event", EventSchema);
+// module.exports = mongoose.model("ending", EndingSchema);
