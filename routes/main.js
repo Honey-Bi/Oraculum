@@ -16,4 +16,8 @@ router.get('/', (req, res) => {
     res.render('./main', {title: 'main', isLogin: true,});
 });
 
+router.post('/select', auth, async (req, res) =>{
+    
+});
+
 module.exports = router;
