@@ -36,8 +36,8 @@ app.get('/', async (req, res) => {
 });
 
 app.all('*', (req,res) => {
-  // res.render('./404', {title: '404 Not', isLogin: userStatus.isLogin(req) });
-  res.status(404).send('<h1>ERROR - 페이지를 찾을 수 없습니다.</h1>')
+  res.render('./404', {title: '404 Not', isLogin: userStatus.isLogin(req) });
+  // res.status(404).send('<h1>ERROR - 페이지를 찾을 수 없습니다.</h1>')
 })
 
 
