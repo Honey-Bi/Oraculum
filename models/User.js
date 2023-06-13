@@ -27,8 +27,8 @@ const UserSchema = new mongoose.Schema({
   access: {
     type: Number,
     default: 0
-  }
-});
+  },
+}, {versionKey: false});
 
 // model을 export 해주기
 module.exports = User = mongoose.model("user", UserSchema);
