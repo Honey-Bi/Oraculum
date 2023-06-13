@@ -24,10 +24,12 @@ app.use(expressSession({
   saveUninitialized: false
 }));
 
+const admin = require('./routes/admin');
 const account = require('./routes/account');
 const main = require('./routes/main');
 // const { auth } = require('./middleware/userValidation');
 
+app.use('/admin', admin);
 app.use('/account', account);
 app.use('/main', main);
 
