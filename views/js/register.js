@@ -178,7 +178,7 @@ $("#btn-register").click(function(){
         dataType: "json",
         success: function(result){
             alert("정상적으로 회원가입되었습니다.");
-            location.replace("/login");
+            location.replace("/");
         },
         error: function(result, status, error) {
             console.log(error)
