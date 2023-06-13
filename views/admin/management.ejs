@@ -7,13 +7,12 @@
     <main>
         <%- include('./sidebar') %>
         <div class="container">
-            <%= data %>
             <table class="table table-striped table-dark">
                 <thead>
                     <tr>
                         <th scope="col">#</th>
-                        <% for(var name in data[0]) { %>
-                            <th scope="col"><%= name %></th>
+                        <% for(var i of Object.keys(data[0]._doc)) { %>
+                            <th scope="col"><%= i %></th>
                         <% } %>
                     </tr>
                 </thead>
