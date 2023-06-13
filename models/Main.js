@@ -3,11 +3,11 @@ const mongoose = require("mongoose"); // mongoose 불러오기
 // Schema 생성
 const MainSchema = new mongoose.Schema({
     userId: {
-        type: Schema.Types.ObjectId,
+        type: mongoose.Schema.Types.ObjectId,
         ref: 'user'
     },
     nowEvent: {
-        type: Schema.Types.ObjectId,
+        type: mongoose.Schema.Types.ObjectId,
         ref: 'event'
     },
     fuel: {
@@ -49,7 +49,7 @@ const EventSchema = new mongoose.Schema({
     r_result: [Number],
     l_result: [Number],
     next_event: {
-        type: Schema.Types.ObjectId,
+        type: mongoose.Schema.Types.ObjectId,
         ref: 'event',
         default: null
     },
