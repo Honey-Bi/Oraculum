@@ -1,6 +1,6 @@
 const router = require('express').Router();
 const { auth } = require('../middleware/userValidation');
-const User = require('../models/User'); 
+const User = require('../models/User');
 
 router.get('/', auth, async (req, res) => {
     const id = req.decoded.user.id;
@@ -22,12 +22,6 @@ router.get('/management', auth, async (req, res) => {
         let user = await User.findOne({ _id: id }) ;
         if (user.access == 1) {
             let data = await User.find({}, {_id: 0, password: 0, __v: 0,});
-            // console.log(data[0])
-
-            keys = await User.findOne({});
-            for(n in keys) {
-                console.log(n);
-            }
             res.render('./admin/management', {data: data});
         } else {
             res.redirect('/404');
