@@ -14,3 +14,7 @@ switch (management) {
         $('.nav-item:nth-child(1) > .nav-link').addClass('active');
         break;
 }
+
+$('#addForm').submit(function(){
+    console.log('submit')
+});
