@@ -1,6 +1,7 @@
 main {
     display: flex;
     flex-wrap: nowrap;
+    margin-left:  + 1.5rem;
     height: 100vh;
     height: -webkit-fill-available;
     max-height: 100vh;
@@ -15,15 +16,34 @@ hr {
     border: 0;
     /* opacity: .25; */
 }
+.sidebar {
+    z-index: 0;
+}
 .b-example-divider {
+    position: fixed;
+    left: 210px;
     flex-shrink: 0;
     width: 1.5rem;
     height: 100vh;
-    background-color: rgba(0, 0, 0, .1);
+    background-color: #1d2024;
     border: solid rgba(0, 0, 0, .15);
     border-width: 1px 0;
-    box-shadow: inset 0 0.5em 1.5em rgba(0, 0, 0, .1), inset 0 0.125em 0.5em rgba(0, 0, 0, .15);
+    z-index: 1;
 }
 .container {
+    max-height: 100%;
     max-width: 100%;
+    margin-left: calc(210px + 1.5rem);
+    z-index: 0;
+}
+.edit, .delete {
+    padding: 0.1rem 0.3rem;
+}
+.signOut {
+    position: fixed;
+    bottom: 1rem;
+    width: 178px;
+}
+.option-bar {
+    position:absolute;
 }
