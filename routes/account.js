@@ -3,8 +3,10 @@ const { auth } = require('../middleware/userValidation');
 const userStatus = require('../middleware/userStatus');
 const bcrypt = require("bcryptjs");
 const User = require('../models/User'); 
+const Main = require('../models/Main'); 
 const jwt = require('jsonwebtoken');
 const config = require('../config/default.json');
+const mongoose = require("mongoose")
 const SECRET_KEY = config.jwtSecretKey;
 
 router.get('/login', (req, res) => {
@@ -15,7 +17,7 @@ router.post("/login-confirm", async (req, res) => {
     const id = req.body.id, 
           pw = req.body.pw;
     try {
-        let user = await User.findOne({email: id});
+        let user = await User.findOne({email: id}).select('+password');
         if(!user){
             return res.status(401).json({
                 code: 401,
@@ -102,10 +104,11 @@ router.post("/register-confirm", async (req, res) => {
         // email-confirm 처리를 통해 먼저 확인하기에 주석처리함
               
         // user에 name, email, password 값 할당        
-        user = new User({
-            name,
-            email,
-            password,
+        let user = new User({
+            _id: new mongoose.Types.ObjectId(),
+            name: name,
+            email: email,
+            password: password,
         });
   
         // password를 암호화 하기
@@ -113,6 +116,19 @@ router.post("/register-confirm", async (req, res) => {
         user.password = await bcrypt.hash(password, salt);
   
         await user.save(); // db에 user 저장
+
+        let event = await Main.MainEvent.findOne({event_code: 0});
+        let id = user._id;
+        event = event._id;
+
+        let main = new Main.Main({
+            _id: new mongoose.Types.ObjectId(),
+            userId: id,
+            nowEvent: event,
+        });
+
+        await main.save();
+
         res.send(true);
     } catch (error) {
         console.error(error.message);
