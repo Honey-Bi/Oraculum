@@ -39,9 +39,14 @@ const MainSchema = new mongoose.Schema({
         default : Date.now
     } 
 
-});
+}, {versionKey: false});
 
 const EventSchema = new mongoose.Schema({
+    event_code: {
+        type: Number,
+        required: true,
+        unique: true
+    },
     title: String,
     contents: String,
     r_text: String,
@@ -53,9 +58,10 @@ const EventSchema = new mongoose.Schema({
         ref: 'event',
         default: null
     },
-});
+}, {versionKey: false});
 
 // model을 export 해주기
-module.exports = Main = mongoose.model("main", MainSchema);
-module.exports = mongoose.model("event", EventSchema);
-// module.exports = mongoose.model("ending", EndingSchema);
+module.exports = {
+    Main: mongoose.model("main", MainSchema),
+    MainEvent: mongoose.model("event", EventSchema)
+};
