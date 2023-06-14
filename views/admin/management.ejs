@@ -4,40 +4,65 @@
     <%- include('./adminHead'); %>   
 </head>
 <body>
+    <div class="modal fade text-dark text-left" id="addModal" tabindex="-1" role="dialog" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Add <%= type %></h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <form id="addForm" onsubmit="return false;">
+                    <div class="modal-body">
+                        <% var keys = [], count = 0; for(fieldName in data[0]._doc) { if(fieldName !='_id') { keys[count++] = fieldName; %>
+                        <div class="form-group">
+                            <label for="recipient-name" class="col-form-label"><%= fieldName %></label>
+                            <input type="text" class="form-control" id="add_<%= fieldName %>">
+                        </div>
+                        <% } } %>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                        <button type="submit" class="btn btn-primary" id="saveBtn">Save changes</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
     <main>
         <%- include('./sidebar') %>
         <div class="container">
-            <table class="table table-striped table-dark">
+            <div class="option-bar">
+                <button class="btn btn-info" data-toggle="modal" data-target="#addModal">Add <%= type %></button>
+            </div>
+            <table class="table table-striped table-dark mt-5">
                 <thead>
                     <tr>
                         <th scope="col">#</th>
-                        <% for(var i of Object.keys(data[0]._doc)) { %>
-                            <th scope="col"><%= i %></th>
+                        <% for (key of keys) { %>
+                            <th scope="col"><%= key %></th>
                         <% } %>
+                        <th scope="col">Delete</th>   
                     </tr>
                 </thead>
                 <tbody>
+                    <% for (i in data) { %>
                     <tr>
-                        <th scope="row">1</th>
-                        <td>Mark</td>
-                        <td>Otto</td>
-                        <td>@mdo</td>
+                        <th scope="row"><%= i %></th>  
+                        <% for (key of keys) { %>
+                        <td nowrap>
+                            <%= data[i][key] %>
+                        </td>
+                        <% } %>
+                        <td>
+                            <button type="button" class="delete btn btn-danger">Delete</button>
+                        </td>
                     </tr>
-                    <tr>
-                        <th scope="row">2</th>
-                        <td>Jacob</td>
-                        <td>Thornton</td>
-                        <td>@fat</td>
-                    </tr>
-                    <tr>
-                        <th scope="row">3</th>
-                        <td>Larry</td>
-                        <td>the Bird</td>
-                        <td>@twitter</td>
-                    </tr>
+                    <% } %>
                 </tbody>
             </table>
-        </div>  
+        </div>
     </main>
     <!-- <div class="container h-100"> -->
         <%- //include('../header'); %>
