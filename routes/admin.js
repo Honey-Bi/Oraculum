@@ -2,6 +2,7 @@ const router = require('express').Router();
 const { auth } = require('../middleware/userValidation');
 const User = require('../models/User');
 const Main = require('../models/Main');
+const { default: mongoose } = require('mongoose');
 
 router.get('/', auth, async (req, res) => {
     const id = req.decoded.user.id;
@@ -68,5 +69,32 @@ router.get('/events', auth, async (req, res) => {
     }
 });
 
+router.post('/deleteUser', auth, async (req, res) => {
+    try {
+        let userId = await User.findOne({ _id: req.decoded.user.id }, {access: 1}) ;
+        let deleteId = await User.findOne({ _id:  req.body.id}, {access: 1});
+        
+        if (deleteId.access == 1 || userId.access != 1) {
+            return res.status(401).json({
+                code: 400,
+                message: '권한이 없습니다.',
+            });
+        }
+        await User.deleteOne({_id: req.body.id});
+
+        return res.status(200).json({
+            code: 200,
+            message: '성공했습니다.',
+        });
+
+    } catch (error) {   
+        console.log(error);
+        return res.status(401).json({
+            code: 401,
+            message: '실패했습니다.',
+        });;
+    }
+    
+});
 
 module.exports = router;

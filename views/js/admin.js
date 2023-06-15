@@ -20,5 +20,32 @@ $('#addForm').submit(function(){
         error: function(result, status, error) {
             console.log(error)
         }
-    })
+    });
+});
+
+$('.edit').click(function(){
+    
+});
+
+$('.delete').click(function(){
+    if(!confirm("정말 삭제 하시겠습니까?")){
+        return;
+    }
+    $.ajax({
+        method: "POST",
+        url: "/admin/deleteUser",
+        data: {
+            id : $(this).val()
+        },
+        dataType: "json",
+        success: function (result) {
+            alert('code: '+result.code+'\n'+result.message);
+        },
+
+        error: function(result, status, error) {
+            alert('code: '+result.status+'\n'+result.responseJSON.message);
+            console.log(result);
+        }
+    });
+    // location.reload();
 });
