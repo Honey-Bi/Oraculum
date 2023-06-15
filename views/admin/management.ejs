@@ -4,6 +4,17 @@
     <%- include('./adminHead'); %>   
 </head>
 <body>
+    <%
+    var keys = [], count = 0;
+    for (fieldName in data[0]._doc) {
+        if(fieldName !='_id' && !notAddDefault.includes(fieldName)) {
+            keys[count++] = fieldName;
+        }
+
+    } 
+    var fieldName = keys.concat(addDefault);
+    %>
+
     <div class="modal fade text-dark text-left" id="addModal" tabindex="-1" role="dialog" aria-hidden="true">
         <div class="modal-dialog" role="document">
             <div class="modal-content">
@@ -15,16 +26,16 @@
                 </div>
                 <form id="addForm" onsubmit="return false;">
                     <div class="modal-body">
-                        <% var keys = [], count = 0; for(fieldName in data[0]._doc) { if(fieldName !='_id') { keys[count++] = fieldName; %>
+                        <% for(key in fieldName) { %>
                         <div class="form-group">
-                            <label for="recipient-name" class="col-form-label"><%= fieldName %></label>
-                            <input type="text" class="form-control" id="add_<%= fieldName %>">
+                            <label for="recipient-name" class="col-form-label"><%= fieldName[key] %></label>
+                            <input type="text" class="form-control" id="add_<%= fieldName[key] %>">
                         </div>
-                        <% } } %>
+                        <% } %>
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                        <button type="submit" class="btn btn-primary" id="saveBtn">Save changes</button>
+                        <button type="submit" class="btn btn-primary" id="saveBtn">Add <%= type %></button>
                     </div>
                 </form>
             </div>

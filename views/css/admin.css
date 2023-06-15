@@ -17,11 +17,14 @@ hr {
     /* opacity: .25; */
 }
 .sidebar {
-    z-index: 0;
+    position: fixed;
+    display: flex;;
+    z-index: 1;
 }
 .b-example-divider {
     position: fixed;
-    left: 210px;
+    /* display: flex; */
+    left: calc(198.42px + 32px);
     flex-shrink: 0;
     width: 1.5rem;
     height: 100vh;
@@ -32,18 +35,17 @@ hr {
 }
 .container {
     max-height: 100%;
-    max-width: 100%;
-    margin-left: calc(210px + 1.5rem);
+    max-width: calc(100% - 198.42px - 32px - 1.5rem);
+    margin-left: calc(198.42px + 32px + 1.5rem);
     z-index: 0;
 }
-.edit, .delete {
-    padding: 0.1rem 0.3rem;
+.add-new {
+    float: right;
 }
-.signOut {
-    position: fixed;
-    bottom: 1rem;
-    width: 178px;
+.table-title > span {
+    font-size: 1.5rem;
+    float: left;
 }
-.option-bar {
-    position:absolute;
+.table td, .table th { 
+    vertical-align : middle;
 }
