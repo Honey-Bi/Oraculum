@@ -34,7 +34,7 @@ const MainSchema = new mongoose.Schema({
         min: 0,
         max: 100
     },
-    created : {
+    main_created : {
         type : Date,
         default : Date.now
     } 
