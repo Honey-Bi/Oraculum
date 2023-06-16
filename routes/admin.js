@@ -102,4 +102,41 @@ router.post('/deleteOne', auth, async (req, res) => {
     
 });
 
+router.post('/addEvent', auth, async (req, res) =>  {
+    try {
+        let userId = await User.findOne({ _id: req.decoded.user.id }, {access: 1}) ;
+        if (userId.access != 1) {
+            return res.status(401).json({
+                code: 400,
+                message: '권한이 없습니다.',
+            });
+        }
+        
+        let mainEvent = new Main.MainEvent({
+            event_code: req.body.event_code,
+            title: req.body.title,
+            contents: req.body.contents,
+            r_text: req.body.r_text,
+            l_text: req.body.l_text,
+            r_result: req.body.r_result,
+            l_result: req.body.l_result,
+            next_event: (req.body.next_event == 'default')? null : req.body.next_event
+        });
+
+        await mainEvent.save();
+
+        return res.status(200).json({
+            code: 200,
+            message: '성공했습니다.',
+        });
+
+    } catch (error) {
+        console.log(error);
+        return res.status(401).json({
+            code: 401,
+            message: '실패했습니다.',
+        });;
+    }
+});
+
 module.exports = router;
