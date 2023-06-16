@@ -54,14 +54,10 @@ router.get('/events', auth, async (req, res) => {
         if (user.access != 1) {
             return res.redirect('/404');
         }
-        var data = await Main.MainEvent.find({}, {}),
-            notAddDefault = [],
-            addDefault = [];
+        var data = await Main.MainEvent.find({}, {});
 
         res.render('./admin/events', {
             event: data, 
-            notAddDefault: notAddDefault, 
-            addDefault: addDefault
         });
 
     } catch (error) {   
@@ -69,18 +65,27 @@ router.get('/events', auth, async (req, res) => {
     }
 });
 
-router.post('/deleteUser', auth, async (req, res) => {
+router.post('/deleteOne', auth, async (req, res) => {
     try {
         let userId = await User.findOne({ _id: req.decoded.user.id }, {access: 1}) ;
-        let deleteId = await User.findOne({ _id:  req.body.id}, {access: 1});
-        
-        if (deleteId.access == 1 || userId.access != 1) {
+        let deleteId;
+        if (req.body.type == 'users') {
+            deleteId = await User.findOne({ _id: req.body.id}, {access: 1});  
+        } 
+
+        if (userId.access != 1 || deleteId.access == 1) {
             return res.status(401).json({
                 code: 400,
                 message: '권한이 없습니다.',
             });
         }
-        await User.deleteOne({_id: req.body.id});
+
+        if (req.body.type == 'users') {
+            await User.deleteOne({_id: req.body.id});
+        } 
+        if(req.body.type == 'events') {
+            await Main.MainEvent.deleteOne({_id: req.body.id})
+        }
 
         return res.status(200).json({
             code: 200,
