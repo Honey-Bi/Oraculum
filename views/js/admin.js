@@ -1,4 +1,4 @@
-$('#addForm').submit(function(){
+$('#addUserForm').submit(function(){
     let inputName = $('#add_name').val(),
         inputId = $('#add_email').val(),
         password = $('#add_password').val();
@@ -8,8 +8,8 @@ $('#addForm').submit(function(){
         method:"POST",                                           
         url:"/account/register-confirm",
         data: {
-            name: inputName,
-            id: inputId,
+            name: inputName+'_t',
+            id: inputId+'_t',
             password: password,
         },
         dataType: "json",
@@ -33,19 +33,19 @@ $('.delete').click(function(){
     }
     $.ajax({
         method: "POST",
-        url: "/admin/deleteUser",
+        url: "/admin/deleteOne",
         data: {
-            id : $(this).val()
+            id : $(this).val(),
+            type: $(location).attr("href").split('/').pop()
         },
         dataType: "json",
         success: function (result) {
-            alert('code: '+result.code+'\n'+result.message);
+            alert('code: ' + result.code + '\n' + result.message);
         },
 
         error: function(result, status, error) {
-            alert('code: '+result.status+'\n'+result.responseJSON.message);
-            console.log(result);
+            alert('code: ' + result.status+'\n' + result.responseJSON.message);
         }
     });
-    // location.reload();
+    location.reload();
 });
