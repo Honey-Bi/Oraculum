@@ -27,6 +27,21 @@ $('.edit').click(function(){
     
 });
 
+let r_result=[], l_result=[];
+$('input[name=results]').change(function() {
+    if($(this).attr('id') == 'left_result') {
+        $('input[name=add_result]').each((index, item) => {
+            r_result[index] = ($(item).val());
+            $(item).val(l_result[index]);
+        });
+        return;
+    } 
+    $('input[name=add_result]').each((index, item) => {
+        l_result[index] = ($(item).val());
+        $(item).val(r_result[index]);
+    });
+});
+
 $('.delete').click(function(){
     if(!confirm("정말 삭제 하시겠습니까?")){
         return;
