@@ -24,13 +24,38 @@ $('#addUserForm').submit(function(){
 });
 
 let r_result=[], l_result=[];
-$('input[name=results]').change(function() {
-    if($(this).attr('id') == 'left_result') {
+
+$('input[name=results]').change(function() {    
+    if ($('input[name=results]:checked').val() == 'left') {
         $('input[name=add_result]').each((index, item) => {
             r_result[index] = ($(item).val());
             $(item).val(l_result[index]);
         });
+    } else if ($('input[name=results]:checked').val() == 'right'){
+        $('input[name=add_result]').each((index, item) => {
+            l_result[index] = ($(item).val());
+            $(item).val(r_result[index]);
+        });
+    }
+});
+
 $('#addEventForm').submit(function(){
+
+    if ($('#left_result').is(':checked')) {
+        $('input[name=add_result]').each((index, item) => {
+            l_result[index] = ($(item).val());
+        });
+    } else if ($('#right_result').is(':checked')) {
+        $('input[name=add_result]').each((index, item) => {
+            r_result[index] = ($(item).val());
+        });
+    }
+
+    if(l_result.length < 4) {
+        $('#left_result').parent().click();
+        return;
+    } else if(r_result.length < 4) {
+        $('#right_result').parent().click();
         return;
     }
 
