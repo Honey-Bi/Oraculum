@@ -30,12 +30,33 @@ $('input[name=results]').change(function() {
             r_result[index] = ($(item).val());
             $(item).val(l_result[index]);
         });
+$('#addEventForm').submit(function(){
         return;
-    } 
-    $('input[name=add_result]').each((index, item) => {
-        l_result[index] = ($(item).val());
-        $(item).val(r_result[index]);
+    }
+
+    $.ajax({
+        type: "POST",
+        url: "/admin/addEvent",
+        data: {
+            event_code: $('#addEventCode').val(),
+            title: $('#addTitle').val(),
+            contents: $('#addContents').val(),
+            r_text: $('#add_l_text').val(),
+            l_text: $('#add_r_text').val(),
+            r_result: l_result,
+            l_result: r_result,
+            next_event: $("#add_next_event option:selected").val()
+        },
+        dataType: "json",
+        success: function (result) {
+            alert('code: ' + result.code + '\n' + result.message);
+        },
+
+        error: function(result, status, error) {
+            alert('code: ' + result.status+'\n' + result.responseJSON.message);
+        }
     });
+    location.reload();
 });
 
 $('.delete').click(function(){
