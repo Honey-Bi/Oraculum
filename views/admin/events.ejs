@@ -7,10 +7,9 @@
     <%
     var keys = [], count = 0;
     for (fieldName in event[0]._doc) {
-        if(fieldName !='_id' && !notAddDefault.includes(fieldName)) {
+        if(!['_id', 'contents'].includes(fieldName)) {
             keys[count++] = fieldName;
         }
-
     } 
     %>
     <main>
@@ -43,7 +42,7 @@
                             </td>
                             <% } %>
                             <td>
-                                <button type="button" class="delete btn btn-danger">Delete</button>
+                                <button type="button" class="delete btn btn-danger" value="<%= event[i]._id %>">Delete</button>
                             </td>
                         </tr>
                         <% } %>
@@ -52,9 +51,74 @@
             </div>
         </div>
     </main>
-    <!-- <div class="container h-100"> -->
-        <%- //include('../header'); %>
-    <!-- </div> -->
+    <div class="modal fade text-dark text-left" id="addModal" tabindex="-1" role="dialog" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Add Event</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <form id="addEventForm" onsubmit="return false;">
+                    <div class="modal-body">
+                        <div class="form-group">
+                            <label class="col-form-label">event_code</label>
+                            <input type="number" class="form-control" id="addEventCode" min="0">
+                        </div>
+                        <div class="form-group">
+                            <label class="col-form-label">title</label>
+                            <input type="text" class="form-control" id="addTitle">
+                        </div>
+                        <div class="form-group">
+                            <label class="col-form-label">contents</label>
+                            <textarea class="form-control" id="addContents"></textarea>
+                        </div>
+                        <div class="form-gorup">
+                            <label class="col-form-label">left & right text</label>
+                            <div class="input-group">
+                                <input type="text" class="form-control" id="add_l_text" placeholder="l_text">
+                                <input type="text" class="form-control" id="add_r_text" placeholder="r_text">
+                            </div>
+                        </div>
+                        <div class="form-gorup">
+                            <label class="col-form-label">left & right result</label>
+                          
+                            <div class="input-group">
+                                <div class="btn-group btn-group-toggle resultBtnGroup" data-toggle="buttons">
+                                    <label class="btn btn-outline-primary active">
+                                        <input type="radio" name="results" id="left_result" checked> left
+                                    </label>
+                                    <label class="btn btn-outline-primary">
+                                        <input type="radio" name="results" id="right_result"> right
+                                    </label>
+                                </div>
+                                <input type="number" class="form-control" min="-100" max="100" name="add_result" placeholder="연료">
+                                <input type="number" class="form-control" min="-100" max="100" name="add_result" placeholder="자원">
+                                <input type="number" class="form-control" min="-100" max="100" name="add_result" placeholder="기술">
+                                <input type="number" class="form-control" min="-100" max="100" name="add_result" placeholder="위험">
+                            </div>
+                        </div>
+
+
+                        <div class="form-group">
+                            <label class="col-form-label">next_event</label>
+                            <select class="form-control">
+                                <option value="default">defulat</option>
+                                <% for (i of event) {  %>
+                                    <option value="<%= i._id %>"><%= i.event_code %></option>
+                                <% } %>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                        <button type="submit" class="btn btn-primary" id="saveBtn">Add Event</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
     <%- include('../script'); %>
     <script>$('.nav-item:nth-child(3) > .nav-link').addClass('active');</script>
     <script src="/js/admin.js"></script>
