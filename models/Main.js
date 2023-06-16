@@ -42,6 +42,10 @@ const MainSchema = new mongoose.Schema({
 }, {versionKey: false});
 
 const EventSchema = new mongoose.Schema({
+    // 0 = 시작,
+    // 1 ~ 999 랜덤 인카운터
+    // 1000 ~  연결용이벤트
+    // 4000 ~  엔딩용 이벤트
     event_code: {
         type: Number,
         required: true,
