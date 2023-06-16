@@ -57,7 +57,7 @@ $('#addEventForm').submit(function(){
     } else if(r_result.length < 4) {
         $('#right_result').parent().click();
         return;
-    }
+    }   
 
     $.ajax({
         type: "POST",
@@ -82,6 +82,10 @@ $('#addEventForm').submit(function(){
         }
     });
     location.reload();
+});
+
+$('.edit').click(function(){
+    
 });
 
 $('.delete').click(function(){
