@@ -67,11 +67,11 @@
                         <span aria-hidden="true">&times;</span>
                     </button>
                 </div>
-                <form id="addForm" onsubmit="return false;">
+                <form id="addUserForm" onsubmit="return false;">
                     <div class="modal-body">
                         <% for(key in fieldName) { if(!notAddDefault.includes(fieldName[key])) {%>
                         <div class="form-group">
-                            <label for="recipient-name" class="col-form-label"><%= fieldName[key] %></label>
+                            <label class="col-form-label"><%= fieldName[key] %></label>
                             <input type="text" class="form-control" id="add_<%= fieldName[key] %>">
                         </div>
                         <% } } %>
