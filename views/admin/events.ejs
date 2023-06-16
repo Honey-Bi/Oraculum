@@ -64,46 +64,43 @@
                     <div class="modal-body">
                         <div class="form-group">
                             <label class="col-form-label">event_code</label>
-                            <input type="number" class="form-control" id="addEventCode" min="0">
+                            <input type="number" class="form-control" id="addEventCode" min="0" required>
                         </div>
                         <div class="form-group">
                             <label class="col-form-label">title</label>
-                            <input type="text" class="form-control" id="addTitle">
+                            <input type="text" class="form-control" id="addTitle" required>
                         </div>
                         <div class="form-group">
                             <label class="col-form-label">contents</label>
-                            <textarea class="form-control" id="addContents"></textarea>
+                            <textarea class="form-control" id="addContents" required></textarea>
                         </div>
                         <div class="form-gorup">
                             <label class="col-form-label">left & right text</label>
                             <div class="input-group">
-                                <input type="text" class="form-control" id="add_l_text" placeholder="l_text">
-                                <input type="text" class="form-control" id="add_r_text" placeholder="r_text">
+                                <input type="text" class="form-control" id="add_l_text" placeholder="l_text" required>
+                                <input type="text" class="form-control" id="add_r_text" placeholder="r_text" required>
                             </div>
                         </div>
                         <div class="form-gorup">
                             <label class="col-form-label">left & right result</label>
-                          
                             <div class="input-group">
                                 <div class="btn-group btn-group-toggle resultBtnGroup" data-toggle="buttons">
                                     <label class="btn btn-outline-primary active">
-                                        <input type="radio" name="results" id="left_result" checked> left
+                                        <input type="radio" name="results" id="left_result" value="left" checked> left
                                     </label>
                                     <label class="btn btn-outline-primary">
-                                        <input type="radio" name="results" id="right_result"> right
+                                        <input type="radio" name="results" id="right_result" value="right"> right
                                     </label>
                                 </div>
-                                <input type="number" class="form-control" min="-100" max="100" name="add_result" placeholder="연료">
-                                <input type="number" class="form-control" min="-100" max="100" name="add_result" placeholder="자원">
-                                <input type="number" class="form-control" min="-100" max="100" name="add_result" placeholder="기술">
-                                <input type="number" class="form-control" min="-100" max="100" name="add_result" placeholder="위험">
+                                <input type="number" class="form-control" min="-100" max="100" name="add_result" placeholder="연료" required>
+                                <input type="number" class="form-control" min="-100" max="100" name="add_result" placeholder="자원" required>
+                                <input type="number" class="form-control" min="-100" max="100" name="add_result" placeholder="기술" required>
+                                <input type="number" class="form-control" min="-100" max="100" name="add_result" placeholder="위험" required>
                             </div>
                         </div>
-
-
                         <div class="form-group">
                             <label class="col-form-label">next_event</label>
-                            <select class="form-control">
+                            <select class="form-control" id="add_next_event" required>
                                 <option value="default">defulat</option>
                                 <% for (i of event) {  %>
                                     <option value="<%= i._id %>"><%= i.event_code %></option>

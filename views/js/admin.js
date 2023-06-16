@@ -23,10 +23,6 @@ $('#addUserForm').submit(function(){
     });
 });
 
-$('.edit').click(function(){
-    
-});
-
 let r_result=[], l_result=[];
 $('input[name=results]').change(function() {
     if($(this).attr('id') == 'left_result') {
