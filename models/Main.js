@@ -4,11 +4,13 @@ const mongoose = require("mongoose"); // mongoose 불러오기
 const MainSchema = new mongoose.Schema({
     userId: {
         type: mongoose.Schema.Types.ObjectId,
-        ref: 'user'
+        ref: 'user',
+        require: true
     },
     nowEvent: {
         type: mongoose.Schema.Types.ObjectId,
-        ref: 'event'
+        ref: 'event',
+        require: true
     },
     fuel: {
         type: Number,
