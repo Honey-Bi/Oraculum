@@ -21,10 +21,16 @@ router.get('/', auth, async (req, res) => {
 router.get('/users', auth, async (req, res) => {
     const id = req.decoded.user.id;
     try {
-        let user = await User.findOne({ _id: id }) ;
+        let user = await User.findOne({ _id: id }, {access:1}) ;
         if (user.access != 1) {
             return res.redirect('/404');
         }
+
+        // var data2 = await Main.Main.find().populate([
+        //     { path: 'userId' },
+        //     { path: 'nowEvent' }
+        // ]);
+        
         var data = await User.find({}, {}),
             notAddDefault = [
                 'created', 'deathCount','access',
@@ -50,7 +56,7 @@ router.get('/users', auth, async (req, res) => {
 router.get('/events', auth, async (req, res) => {
     const id = req.decoded.user.id;
     try {
-        let user = await User.findOne({ _id: id }) ;
+        let user = await User.findOne({ _id: id }, {access:1}) ;
         if (user.access != 1) {
             return res.redirect('/404');
         }
