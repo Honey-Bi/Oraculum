@@ -8,16 +8,32 @@
 <body>
     <div class="container">
         <%- include('./header'); %>
-        <h3 class="title">asd<%= //userName %></h3>
-        <div class="row d-flex justify-content-center align-items-center h-100">
-            <div class="col-10 col-md-8 col-lg-8 col-xl-8 slider">                
-                <div class="item a" draggable="true">a</div>
+        <div class="d-flex flex-column main">
+            <div class="row stats">
+                <i class="col-3 fa-solid fa-gas-pump" id="fuel">
+                    <i class="fa-solid fa-gas-pump" id="fuelFill"></i>
+                </i>
+                <i class="col-3 fa-solid fa-dollar-sign" id="resource">
+                    <i class="fa-solid fa-dollar-sign" id="resourceFill"></i>
+                </i>
+                <i class="col-3 fa-solid fa-microchip" id="technology">
+                    <i class="fa-solid fa-microchip" id="technologyFill"></i>
+                </i>
+                <i class="col-3 fa-solid fa-triangle-exclamation" id="risk">
+                    <i class="fa-solid fa-triangle-exclamation" id="riskFill"></i>
+                </i>
+            </div>
+            <h4 class="contents">asd</h4>
+            <div class="row justify-content-center mt-auto mb-auto">
+                <div class="col-10 col-md-8 col-lg-8 col-xl-8 slider">                
+                    <div class="item selectBox" draggable="true"></div>
+                </div>
             </div>
         </div>
     </div>
 
-    <div class="answer answer-left">left</div>
-    <div class="answer answer-right">right</div>
+    <div class="answer answer-left" id="selectLeft"></div>
+    <div class="answer answer-right" id="selectRight"></div>
 
     <footer>
         <%- include('./script'); %>
