@@ -28,26 +28,32 @@ let r_result=[], l_result=[];
 $('input[name=results]').change(function() {    
     if ($('input[name=results]:checked').val() == 'left') {
         $('input[name=add_result]').each((index, item) => {
-            r_result[index] = ($(item).val());
+            r_result[index] = $(item).val()*1;
             $(item).val(l_result[index]);
         });
     } else if ($('input[name=results]:checked').val() == 'right'){
         $('input[name=add_result]').each((index, item) => {
-            l_result[index] = ($(item).val());
+            l_result[index] = $(item).val()*1;
             $(item).val(r_result[index]);
         });
     }
 });
 
-$('#addEventForm').submit(function(){
-
+let actionUrl;
+$('.editEvent').click(function() {
+    actionUrl = "/admin/setEvent";
+});
+$('.add-new').click(function() {
+    actionUrl = "/admin/addEvent";
+});
+$('#eventForm').submit(function(){
     if ($('#left_result').is(':checked')) {
         $('input[name=add_result]').each((index, item) => {
-            l_result[index] = ($(item).val());
+            l_result[index] = $(item).val()*1;
         });
     } else if ($('#right_result').is(':checked')) {
         $('input[name=add_result]').each((index, item) => {
-            r_result[index] = ($(item).val());
+            r_result[index] = $(item).val()*1;
         });
     }
 
@@ -59,16 +65,17 @@ $('#addEventForm').submit(function(){
 
     $.ajax({
         type: "POST",
-        url: "/admin/addEvent",
+        url: actionUrl,
         data: {
             event_code: $('#addEventCode').val(),
             title: $('#addTitle').val(),
             contents: $('#addContents').val(),
             r_text: $('#add_l_text').val(),
             l_text: $('#add_r_text').val(),
-            r_result: l_result,
-            l_result: r_result,
-            next_event: $("#add_next_event option:selected").val()
+            r_result: r_result,
+            l_result: l_result,
+            next_event: $("#add_next_event option:selected").val(),
+            id: currentId
         },
         dataType: "json",
         success: function (result) {
@@ -79,11 +86,41 @@ $('#addEventForm').submit(function(){
             return alert('code: ' + result.status+'\n' + result.responseJSON.message);
         }
     });
-    location.reload();
+    // location.reload();
 });
 
-$('.edit').click(function(){
-    
+
+let currentId;
+$('.editEvent').click(function(){
+    currentId = $(this).val();
+    $.ajax({
+        method: "get",
+        url: "/admin/getEvent?id="+currentId,
+        dataType: "json",
+        success: function(result) {
+            $('#addEventCode').val(result.event_code);
+            $('#addTitle').val(result.title);
+            $('#addContents').val(result.contents);
+            $('#add_l_text').val(result.l_text);
+            $('#add_r_text').val(result.r_text);
+            l_result = result.l_result;
+            r_result = result.r_result;
+            if ($('#left_result').is(':checked')) {
+                $('input[name=add_result]').each((index, item) => {
+                    $(item).val(l_result[index]);
+                });
+            } else if ($('#right_result').is(':checked')) {
+                $('input[name=add_result]').each((index, item) => {
+                    $(item).val(r_result[index]);
+                });
+            }
+
+            $("#edit_next_event").val(result.next_event+'').prop("selected", true);
+        },
+        error: function(result, status, error) {
+            console.log(error);
+        }
+    });
 });
 
 $('.delete').click(function(){
