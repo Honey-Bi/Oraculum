@@ -21,7 +21,7 @@ const UserSchema = new mongoose.Schema({
     type : Date,
     default : Date.now
   },
-  deathCount: {
+  tryCount: {
     type: Number,
     default: 0
   },
