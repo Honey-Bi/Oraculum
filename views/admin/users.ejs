@@ -6,8 +6,7 @@
 <body>
     <%
     var keys = [], count = 0;
-    var fieldNames = Object.assign(user[0]._doc, userMain[0]._doc); 
-    for (fieldName in fieldNames) {
+    for (fieldName in user[0]._doc) {
         if(!notId.includes(fieldName)) {
             keys[count++] = fieldName;
         }
@@ -34,19 +33,19 @@
                         </tr>
                     </thead>
                     <tbody>
-                        <% for (i in user) { var data = Object.assign(user[i]._doc, userMain[i]._doc); %>
+                        <% for (i in user) { %>
                         <tr>
                             <th scope="row"><%= i %></th>  
                             <% for (key of keys) { %>
                             <td nowrap>
-                                <%= data[key] %>
+                                <%= user[i][key] %>
                             </td>
                             <% } %>
                             <td nowrap>
                                 <button type="button" class="edit btn btn-warning">
                                     <i class="fa-sharp fa-solid fa-pen-to-square"></i>
                                 </button>
-                                <button type="button" class="delete btn btn-danger" value="<%= data.userId %>">
+                                <button type="button" class="delete btn btn-danger" value="<%= user._id %>">
                                     <i class="fa-solid fa-trash"></i>
                                 </button>
                             </td>

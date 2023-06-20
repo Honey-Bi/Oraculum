@@ -37,16 +37,16 @@ router.get('/users', auth, async (req, res) => {
                 ,'fuel','resourse','technology','risk','main_created'
             ],
             notId = ['_id', 'userId','nowEvent'],
-            addDefault = ['password'],
-            userMain = await Main.Main.find({}, {});
+            addDefault = ['password'];
+            // userMain = await Main.Main.find({}, {});
 
         res.render('./admin/users', {
             notId: notId,
             user: data, 
             notAddDefault: notAddDefault, 
-            addDefault: addDefault,
-            userMain: userMain
+            addDefault: addDefault
         });
+        // userMain: userMain
 
     } catch (error) {   
         console.log(error)
@@ -60,7 +60,7 @@ router.get('/events', auth, async (req, res) => {
         if (user.access != 1) {
             return res.redirect('/404');
         }
-        var data = await Main.MainEvent.find({}, {});
+        var data = await Main.MainEvent.find().sort({event_code:1});
 
         res.render('./admin/events', {
             event: data, 
@@ -88,6 +88,7 @@ router.post('/deleteOne', auth, async (req, res) => {
 
         if (req.body.type == 'users') {
             await User.deleteOne({_id: req.body.id});
+            await Main.Main.deleteOne({userId: req.body.id});
         } 
         if(req.body.type == 'events') {
             await Main.MainEvent.deleteOne({_id: req.body.id})
