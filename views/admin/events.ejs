@@ -29,7 +29,7 @@
                             <% for (key of keys) { %>
                                 <th scope="col"><%= key %></th>
                             <% } %>
-                            <th scope="col">Delete</th>   
+                            <th scope="col">actions</th>   
                         </tr>
                     </thead>
                     <tbody>
@@ -42,7 +42,12 @@
                             </td>
                             <% } %>
                             <td>
-                                <button type="button" class="delete btn btn-danger" value="<%= event[i]._id %>">Delete</button>
+                                <button type="button" class="edit btn btn-warning">
+                                    <i class="fa-sharp fa-solid fa-pen-to-square"></i>
+                                </button>
+                                <button type="button" class="delete btn btn-danger" value="<%= event[i]._id %>">
+                                    <i class="fa-solid fa-trash"></i>
+                                </button>
                             </td>
                         </tr>
                         <% } %>
