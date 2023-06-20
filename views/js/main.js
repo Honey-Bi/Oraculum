@@ -27,7 +27,7 @@ function setView() {
             setContentView(result.content);
             setStatsView(
                 result.fuel, 
-                result.resource, 
+                result.resourse, 
                 result.technology, 
                 result.risk
             );
@@ -43,10 +43,10 @@ function setContentView(text) {
     $('.contents').text(text);
 }
 function setStatsView(fuel, resource, technology, risk) {
-    $('#fuelFill').css('height', 100-fuel+'%');
-    $('#resourceFill').css('height', 100-resource+'%');
-    $('#technologyFill').css('height', 100-technology+'%');
-    $('#riskFill').css('height', 100-risk+'%');
+    $('#fuelFill').animate({height: 100-fuel + '%'}, 500);
+    $('#resourceFill').animate({height: 100-resource + '%'}, 500);
+    $('#technologyFill').animate({height: 100-technology + '%'}, 500);
+    $('#riskFill').animate({height: 100-risk + '%'}, 500);
 }
 function setSelectView(left, right) {
     $('#selectLeft').text(left);
@@ -67,9 +67,9 @@ $('.selectBox').draggable({
         $('.answer').animate({opacity: 0}, 250);  
         var select;
         if ($(this).position().left >= maxWidth) { //왼쪽 선택
-            select = 0;
+            select = 'left';
         } else if($(this).position().left <= -maxWidth) { //오른쪽 선택
-            select = 1;
+            select = 'right';
         }
 
         $.ajax({
