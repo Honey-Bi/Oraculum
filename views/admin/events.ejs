@@ -17,7 +17,7 @@
         <div class="container">
             <div class="table-title">
                 <span>Event Data</span>
-                <button class="btn btn-primary add-new" data-toggle="modal" data-target="#addModal">
+                <button class="btn btn-primary add-new" data-toggle="modal" data-target="#eventModal">
                     <i class="fa-solid fa-plus"></i>
                 </button>
             </div>
@@ -42,7 +42,7 @@
                             </td>
                             <% } %>
                             <td>
-                                <button type="button" class="edit btn btn-warning">
+                                <button type="button" class="editEvent btn btn-warning" data-toggle="modal" data-target="#eventModal" value="<%= event[i]._id %>">
                                     <i class="fa-sharp fa-solid fa-pen-to-square"></i>
                                 </button>
                                 <button type="button" class="delete btn btn-danger" value="<%= event[i]._id %>">
@@ -56,7 +56,8 @@
             </div>
         </div>
     </main>
-    <div class="modal fade text-dark text-left" id="addModal" tabindex="-1" role="dialog" aria-hidden="true">
+
+    <div class="modal fade text-dark text-left" id="eventModal" tabindex="-1" role="dialog" aria-hidden="true">
         <div class="modal-dialog" role="document">
             <div class="modal-content">
                 <div class="modal-header">
@@ -65,7 +66,7 @@
                         <span aria-hidden="true">&times;</span>
                     </button>
                 </div>
-                <form id="addEventForm" onsubmit="return false;">
+                <form id="eventForm" onsubmit="return false;">
                     <div class="modal-body">
                         <div class="form-group">
                             <label class="col-form-label">event_code</label>
@@ -107,14 +108,15 @@
                             <label class="col-form-label">next_event</label>
                             <select class="form-control" id="add_next_event" required>
                                 <option value="default">defulat</option>
-                                <% for (i of event) {  %>
-                                    <option value="<%= i._id %>"><%= i.event_code %></option>
+                                <% for (i of event) { %>
+                                    <option value="<%= i._id %>"><%= i.event_code %> <%= i.title %></option>
                                 <% } %>
                             </select>
                         </div>
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                        <button type="submit" class="btn btn-warning" id="editBtn">Edit Event</button>
                         <button type="submit" class="btn btn-primary" id="saveBtn">Add Event</button>
                     </div>
                 </form>
