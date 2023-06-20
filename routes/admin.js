@@ -32,10 +32,7 @@ router.get('/users', auth, async (req, res) => {
         // ]);
         
         var data = await User.find({}, {}),
-            notAddDefault = [
-                'created', 'deathCount','access',
-                ,'fuel','resourse','technology','risk','main_created'
-            ],
+            notAddDefault = ['created', 'tryCount','access'],
             notId = ['_id', 'userId','nowEvent'],
             addDefault = ['password'];
             // userMain = await Main.Main.find({}, {});
@@ -145,5 +142,56 @@ router.post('/addEvent', auth, async (req, res) =>  {
         });;
     }
 });
+
+router.get('/getEvent', async (req, res) => {
+    try {
+        let events = await Main.MainEvent.findById(req.query.id);;
+        return res.status(200).send(events);
+    } catch (error) {
+        console.log(error);
+        return res.status(401).json({
+            code: 401,
+            message: '실패했습니다.',
+        });;
+    }
+});
+
+router.post('/setEvent'), auth, async (req, res) => {
+    try {
+        let userId = await User.findOne({ _id: req.decoded.user.id }, {access: 1}) ;
+        if (userId.access != 1) {
+            return res.status(401).json({
+                code: 400,
+                message: '권한이 없습니다.',
+            });
+        }
+
+        await Main.MainEvent.updateOne({
+            _id: req.body.id
+        }, {
+            $set: {
+                event_code: req.body.event_code,
+                title: req.body.title,
+                contents: req.body.contents,
+                l_text: req.body.l_text,
+                r_text: req.body.r_text,
+                l_result: req.body.l_result,
+                r_result: req.body.r_result,
+                next_event: req.body.next_event
+            }
+        });
+
+        return res.status(200).json({
+            code: 200,
+            message: '성공했습니다.',
+        });
+    } catch (error) {
+        console.log(error);
+        return res.status(401).json({
+            code: 401,
+            message: '실패했습니다.',
+        });;
+    }
+}
 
 module.exports = router;
