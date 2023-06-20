@@ -51,12 +51,10 @@ $('#addEventForm').submit(function(){
         });
     }
 
-    if(l_result.length < 4) {
-        $('#left_result').parent().click();
-        return;
-    } else if(r_result.length < 4) {
-        $('#right_result').parent().click();
-        return;
+    if(l_result.includes('') || l_result.length < 4) {
+        return $('#left_result').parent().click();
+    } else if(r_result.includes('') || r_result.length < 4) {
+        return $('#right_result').parent().click();
     }   
 
     $.ajax({
@@ -74,11 +72,11 @@ $('#addEventForm').submit(function(){
         },
         dataType: "json",
         success: function (result) {
-            alert('code: ' + result.code + '\n' + result.message);
+            return alert('code: ' + result.code + '\n' + result.message);
         },
 
         error: function(result, status, error) {
-            alert('code: ' + result.status+'\n' + result.responseJSON.message);
+            return alert('code: ' + result.status+'\n' + result.responseJSON.message);
         }
     });
     location.reload();
