@@ -39,14 +39,18 @@ $('input[name=results]').change(function() {
     }
 });
 
-let actionUrl;
+let actionType;
 $('.editEvent').click(function() {
-    actionUrl = "/admin/setEvent";
+    actionType = "update";
+    $('#editBtn').css('display', 'block');
+    $('#saveBtn').css('display', 'none');
 });
-$('.add-new').click(function() {
-    actionUrl = "/admin/addEvent";
+$('.addEvent').click(function() {
+    actionType = "insert";
+    $('#editBtn').css('display', 'none');
+    $('#saveBtn').css('display', 'block');
 });
-$('#eventForm').submit(function(){
+$('#eventForm').submit(function() {
     if ($('#left_result').is(':checked')) {
         $('input[name=add_result]').each((index, item) => {
             l_result[index] = $(item).val()*1;
@@ -64,10 +68,10 @@ $('#eventForm').submit(function(){
     }   
 
     $.ajax({
-        type: "POST",
-        url: actionUrl,
+        method:'POST',                                           
+        url: '/admin/actionEvent',
         data: {
-            event_code: $('#addEventCode').val(),
+            event_code: $('#addEventCode').val()*1,
             title: $('#addTitle').val(),
             contents: $('#addContents').val(),
             r_text: $('#add_l_text').val(),
@@ -75,7 +79,8 @@ $('#eventForm').submit(function(){
             r_result: r_result,
             l_result: l_result,
             next_event: $("#add_next_event option:selected").val(),
-            id: currentId
+            id: currentId,
+            type: actionType
         },
         dataType: "json",
         success: function (result) {
@@ -83,13 +88,24 @@ $('#eventForm').submit(function(){
         },
 
         error: function(result, status, error) {
-            return alert('code: ' + result.status+'\n' + result.responseJSON.message);
+            return alert('code: ' + status+'\n' + error);
         }
     });
-    // location.reload();
+    location.reload();
 });
 
-
+$('.addEvent').click(function() {
+    $('#addEventCode').val('');
+    $('#addTitle').val('');
+    $('#addContents').val('');
+    $('#add_l_text').val('');
+    $('#add_r_text').val('');
+    l_result = []; 
+    r_result = [];
+    $('input[name=add_result]').each((index, item) => {
+        $(item).val('');
+    });
+});
 let currentId;
 $('.editEvent').click(function(){
     currentId = $(this).val();
@@ -136,11 +152,13 @@ $('.delete').click(function(){
         },
         dataType: "json",
         success: function (result) {
-            alert('code: ' + result.code + '\n' + result.message);
+            console.log(result);
+            // alert('code: ' + result.code + '\n' + result.message);
         },
 
         error: function(result, status, error) {
-            alert('code: ' + result.status+'\n' + result.responseJSON.message);
+            console.log(error);
+            // alert('code: ' + result.status+'\n' + result.responseJSON.message);
         }
     });
     location.reload();
