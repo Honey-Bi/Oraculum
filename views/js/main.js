@@ -24,14 +24,15 @@ function setView() {
         async: true,
         dataType: 'json',
         success: function(result){
-            setContentView(result.content);
+            setContentView(result.nowEvent.contents);
             setStatsView(
                 result.fuel, 
                 result.resourse, 
                 result.technology, 
                 result.risk
             );
-            setSelectView(result.l_text, result.r_text);
+            setSelectView(result.nowEvent.choices.left, result.nowEvent.choices.right);
+            
         },
         error: function(request, status, error) {
             console.log(error)

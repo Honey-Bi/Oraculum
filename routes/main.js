@@ -29,6 +29,8 @@ router.post('/select', auth, async (req, res) =>{
             risk: main.risk + rewards.risk,
         }
 
+        console.log(stats);
+
         let nextEventId = isOver(stats); // 게임오버인지 확인
         if (nextEventId) { // 게임 오버시
             nextEvent = await Main.MainEvent.findOne({
@@ -39,19 +41,20 @@ router.post('/select', auth, async (req, res) =>{
                 event_type: 'random'
             }).skip(getRandom());
         }
+        console.log(nextEvent._id);
 
-        await Main.Main.updateOne({
-            _id: main._id
-        }, {
-            $set: {
-                turn: ++main.turn,
-                nowEvent: nextEvent._id,
-                fuel: stats.fuel,
-                resourse: stats.resourse,
-                technology: stats.technology,
-                risk: stats.risk
-            }
-        });
+        // await Main.Main.updateOne({
+        //     _id: main._id
+        // }, {
+        //     $set: {
+        //         turn: ++main.turn,
+        //         nowEvent: nextEvent._id,
+        //         fuel: stats.fuel,
+        //         resourse: stats.resourse,
+        //         technology: stats.technology,
+        //         risk: stats.risk
+        //     }
+        // });
         return res.status(200).send(true);
     } catch (error) {
         console.log(error);
@@ -61,7 +64,7 @@ router.post('/select', auth, async (req, res) =>{
 
 router.post('/getView', auth, async (req, res) => {
     try {
-        let main = await Main.Main.findOne({
+        const main = await Main.Main.findOne({
             userId: req.decoded.user.id
         }, {
             fuel: 1,
@@ -70,19 +73,9 @@ router.post('/getView', auth, async (req, res) => {
             risk: 1
         }).populate('nowEvent', {
             contents: 1,
-            r_text: 1,
-            l_text: 1
+            choices: 1
         });
-        let result = {
-            fuel: main.fuel,
-            resourse: main.resourse,
-            technology: main.technology,
-            risk: main.risk,
-            content: main.nowEvent.contents,
-            r_text: main.nowEvent.r_text,
-            l_text: main.nowEvent.l_text
-        }       
-        return res.status(200).send(result);
+        return res.status(200).send(main);
     } catch (error) {
         return res.status(400).send(error);    
     }
