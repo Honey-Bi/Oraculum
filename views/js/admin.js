@@ -46,15 +46,28 @@ $('input[name=next_event]').change(function() {
 });
 
 let actionType;
-$('.editEvent').click(function() {
-    actionType = "update";
-    $('#editBtn').css('display', 'block');
-    $('#saveBtn').css('display', 'none');
-});
 $('.addEvent').click(function() {
+    if (actionType == "insert") {
+        return;
+    };
+    
     actionType = "insert";
     $('#editBtn').css('display', 'none');
     $('#saveBtn').css('display', 'block');
+
+    $('#eventType').val('random').prop('selected', true);
+    $('#eventCode').val('');
+    $('#eventTitle').val('');
+    $('#eventContents').val('');
+    $('#l_text').val('');
+    $('#r_text').val('');
+    $('#left_result').click();
+    $('#left_event').click();
+    $('.stats > input').each((index, item) => {
+        $(item).val('');
+    });
+    $('#leftEvent').val('default').prop('selected', true);
+    $('#rightEvent').val('default').prop('selected', true);
 });
 
 jQuery.fn.serializeObject = function() {
@@ -101,23 +114,14 @@ $('#eventForm').submit(function() {
     location.reload();
 });
 
-$('.addEvent').click(function() {
-    $('#eventType').val('random').prop('selected', true);
-    $('#eventCode').val('');
-    $('#eventTitle').val('');
-    $('#eventContents').val('');
-    $('#l_text').val('');
-    $('#r_text').val('');
-    $('#left_result').click();
-    $('#left_event').click();
-    $('.stats > input').each((index, item) => {
-        $(item).val('');
-    });
-    $('#leftEvent').val('default').prop('selected', true);
-    $('#rightEvent').val('default').prop('selected', true);
-});
 let currentId;
 $('.editEvent').click(function(){
+    if (actionType == "update") {
+        return;
+    }
+    actionType = "update";
+    $('#editBtn').css('display', 'block');
+    $('#saveBtn').css('display', 'none');
     currentId = $(this).val();
     $.ajax({
         method: "get",
