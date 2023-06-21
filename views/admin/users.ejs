@@ -7,7 +7,7 @@
     <%
     var keys = [], count = 0;
     for (fieldName in user[0]._doc) {
-        if(!notId.includes(fieldName)) {
+        if(!notView.includes(fieldName)) {
             keys[count++] = fieldName;
         }
     } 

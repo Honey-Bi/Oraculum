@@ -45,9 +45,9 @@ router.post('/select', auth, async (req, res) =>{
 
 
         if (nextEventId) { // 게임 오버시
-            nextEvent = await Main.MainEvent.findOne({event_code: 4000 + nextEventId});
+            nextEvent = await Main.MainEvent.findOne({event_type: 'ending', event_code: nextEventId});
         } else if (nextEvent === null){ //정해진 다음 이벤트가 없을경우
-            nextEvent = await Main.MainEvent.findOne({event_code: getRandom(1, 4)});
+            nextEvent = await Main.MainEvent.findOne({event_type: 'random'}).skip(getRandom());
         }
 
         await Main.Main.updateOne({
@@ -119,7 +119,9 @@ function isOver(stats) {
     // 8 = 위험부족
 }
 
-function getRandom(min, max) {
+function getRandom() {
+    let min = 1;
+    let max = Main.MainEvent.find({event_code:'random'}).count();
     return Math.floor(Math.random() * (max+1 - min) + min);
 }   
 
