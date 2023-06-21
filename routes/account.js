@@ -105,7 +105,6 @@ router.post("/register-confirm", async (req, res) => {
               
         // user에 name, email, password 값 할당        
         let user = new User({
-            _id: new mongoose.Types.ObjectId(),
             name: name,
             email: email,
             password: password,
@@ -117,17 +116,16 @@ router.post("/register-confirm", async (req, res) => {
   
         await user.save(); // db에 user 저장
 
-        let event = await Main.MainEvent.findOne({event_code: 0});
         let id = user._id;
-        event = event._id;
+        let event = await Main.MainEvent.findOne({ 
+            event_type: 'random',
+            event_code: 0 // 시작 이벤트
+        })._id;
 
-        let main = new Main.Main({
-            _id: new mongoose.Types.ObjectId(),
+        new Main.Main({
             userId: id,
             nowEvent: event,
-        });
-
-        await main.save();
+        }).save();
 
         res.send(true);
     } catch (error) {

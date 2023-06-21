@@ -67,9 +67,9 @@ $('.selectBox').draggable({
         $('.answer').animate({opacity: 0}, 250);  
         var select;
         if ($(this).position().left >= maxWidth) { //왼쪽 선택
-            select = 'left';
+            select = 1;
         } else if($(this).position().left <= -maxWidth) { //오른쪽 선택
-            select = 'right';
+            select = 0;
         }
 
         $.ajax({
@@ -77,7 +77,7 @@ $('.selectBox').draggable({
             url:'/main/select',
             async: true,
             data: {
-                answer: select,
+                isLeft: select*1,
             },
             dataType: 'json',
             success: function(result){

@@ -152,14 +152,14 @@ $('.delete').click(function(){
         },
         dataType: "json",
         success: function (result) {
-            console.log(result);
-            // alert('code: ' + result.code + '\n' + result.message);
+            // console.log(result);
+            alert('code: ' + result.code + '\n' + result.message);
+            location.reload();
         },
 
         error: function(result, status, error) {
             console.log(error);
-            // alert('code: ' + result.status+'\n' + result.responseJSON.message);
+            alert('code: ' + result.status+'\n' + result.responseJSON.message);
         }
     });
-    location.reload();
 });

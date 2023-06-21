@@ -5,7 +5,8 @@ const MainSchema = new mongoose.Schema({
     userId: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'user',
-        require: true
+        require: true,
+        unique: true
     },
     nowEvent: {
         type: mongoose.Schema.Types.ObjectId,
@@ -56,7 +57,6 @@ const EventSchema = new mongoose.Schema({
     event_code: {
         type: Number,
         required: true,
-        unique: true
     },
     title: String,
     contents: String,
@@ -65,8 +65,8 @@ const EventSchema = new mongoose.Schema({
         left: String,
         right: String
     },
-    rewards: {
-        left: { //좌 선택
+    rewards: { 
+        left: { //좌 선택 결과
             fuel: {
                 type: Number,
                 default: 0
@@ -84,7 +84,7 @@ const EventSchema = new mongoose.Schema({
                 default: 0
             }
         },
-        right: { //우 선택
+        right: { //우 선택 결과
             fuel: {
                 type: Number,
                 default: 0
