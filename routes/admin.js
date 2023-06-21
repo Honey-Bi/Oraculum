@@ -1,10 +1,10 @@
 const router = require('express').Router();
-const { auth } = require('../middleware/userValidation');
+const { admin } = require('../middleware/adminValidation');
 const User = require('../models/User');
 const Main = require('../models/Main');
 const { default: mongoose } = require('mongoose');
 
-router.get('/', auth, async (req, res) => {
+router.get('/', admin, async (req, res) => {
     const id = req.decoded.user.id;
     try {
         let user = await User.findOne({ _id: id }) ;
@@ -18,7 +18,7 @@ router.get('/', auth, async (req, res) => {
     }
 });
 
-router.get('/users', auth, async (req, res) => {
+router.get('/users', admin, async (req, res) => {
     const id = req.decoded.user.id;
     try {
         let user = await User.findOne({ _id: id }, {access:1}) ;
@@ -33,12 +33,12 @@ router.get('/users', auth, async (req, res) => {
         
         var data = await User.find({}, {}),
             notAddDefault = ['created', 'tryCount','access'],
-            notId = ['_id', 'userId','nowEvent'],
+            notView = ['_id', 'userId','nowEvent'],
             addDefault = ['password'];
             // userMain = await Main.Main.find({}, {});
 
         res.render('./admin/users', {
-            notId: notId,
+            notView: notView,
             user: data, 
             notAddDefault: notAddDefault, 
             addDefault: addDefault
@@ -50,17 +50,19 @@ router.get('/users', auth, async (req, res) => {
     }
 });
 
-router.get('/events', auth, async (req, res) => {
+router.get('/events', admin, async (req, res) => {
     const id = req.decoded.user.id;
     try {
-        let user = await User.findOne({ _id: id }, {access:1}) ;
+        const user = await User.findOne({ _id: id }, {access:1}) ;
         if (user.access != 1) {
             return res.redirect('/404');
         }
-        var data = await Main.MainEvent.find().sort({event_code:1});
+        const data = await Main.MainEvent.find().sort({event_code:1});
+        let notView = ['_id', 'contents', 'next_event', 'rewards', 'choices']
 
         res.render('./admin/events', {
             event: data, 
+            notView: notView,
         });
 
     } catch (error) {   
@@ -68,7 +70,7 @@ router.get('/events', auth, async (req, res) => {
     }
 });
 
-router.post('/deleteOne', auth, async (req, res) => {
+router.post('/deleteOne', admin, async (req, res) => {
     try {
         let userId = await User.findOne({ _id: req.decoded.user.id }, {access: 1}) ;
         let deleteId;
@@ -77,7 +79,7 @@ router.post('/deleteOne', auth, async (req, res) => {
         } 
 
         if (userId.access != 1 || deleteId.access == 1) {
-            return res.status(401).json({
+            return res.status(400).json({
                 code: 400,
                 message: '권한이 없습니다.',
             });
@@ -106,9 +108,9 @@ router.post('/deleteOne', auth, async (req, res) => {
     
 });
 
-router.post('/addEvent', auth, async (req, res) =>  {
+router.post('/actionEvent', admin, async (req, res) =>  {
     try {
-        let userId = await User.findOne({ _id: req.decoded.user.id }, {access: 1}) ;
+        const userId = await User.findOne({ _id: req.decoded.user.id }, {access: 1}) ;
         if (userId.access != 1) {
             return res.status(401).json({
                 code: 400,
@@ -116,18 +118,43 @@ router.post('/addEvent', auth, async (req, res) =>  {
             });
         }
         
-        let mainEvent = new Main.MainEvent({
-            event_code: req.body.event_code,
-            title: req.body.title,
-            contents: req.body.contents,
-            r_text: req.body.r_text,
-            l_text: req.body.l_text,
-            r_result: req.body.r_result,
-            l_result: req.body.l_result,
-            next_event: (req.body.next_event == 'default')? null : req.body.next_event
-        });
-
-        await mainEvent.save();
+        const formData = req.body.formData;
+        let data = {
+            event_type: formData.eventType,
+            event_code: formData.eventCode,
+            title: formData.eventTitle,
+            contents: formData.eventContents,
+            choices: {
+                left: formData.choice_left,
+                right: formData.choice_right
+            },
+            rewards: {
+                left: {
+                    fuel: formData.left_fuel,
+                    resource:formData.left_resource,
+                    technology: formData.left_technology,
+                    risk: formData.left_risk,
+                },
+                right: {
+                    fuel: formData.right_fuel,
+                    resource: formData.right_resource,
+                    technology: formData.right_technology,
+                    risk: formData.right_risk
+                }
+            },
+            next_event: {
+                left: (formData.leftEvent == 'default')? null : formData.leftEvent,
+                right: (formData.rightEvent == 'default')? null : formData.rightEvent
+            }
+        }
+        
+        if(req.body.type == 'update') {
+            await Main.MainEvent.findOneAndUpdate({_id: req.body.id}, {$set: data});
+            console.log('event update accept');
+        } else if(req.body.type == 'insert') {
+            await new Main.MainEvent(data).save();
+            console.log('event insert accept');
+        }
 
         return res.status(200).json({
             code: 200,
@@ -155,43 +182,5 @@ router.get('/getEvent', async (req, res) => {
         });;
     }
 });
-
-router.post('/setEvent'), auth, async (req, res) => {
-    try {
-        let userId = await User.findOne({ _id: req.decoded.user.id }, {access: 1}) ;
-        if (userId.access != 1) {
-            return res.status(401).json({
-                code: 400,
-                message: '권한이 없습니다.',
-            });
-        }
-
-        await Main.MainEvent.updateOne({
-            _id: req.body.id
-        }, {
-            $set: {
-                event_code: req.body.event_code,
-                title: req.body.title,
-                contents: req.body.contents,
-                l_text: req.body.l_text,
-                r_text: req.body.r_text,
-                l_result: req.body.l_result,
-                r_result: req.body.r_result,
-                next_event: req.body.next_event
-            }
-        });
-
-        return res.status(200).json({
-            code: 200,
-            message: '성공했습니다.',
-        });
-    } catch (error) {
-        console.log(error);
-        return res.status(401).json({
-            code: 401,
-            message: '실패했습니다.',
-        });;
-    }
-}
 
 module.exports = router;
