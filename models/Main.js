@@ -12,6 +12,10 @@ const MainSchema = new mongoose.Schema({
         ref: 'event',
         require: true
     },
+    turn: {
+        type: Number,
+        default:0
+    },
     fuel: {
         type: Number,
         default: 50,
@@ -44,10 +48,11 @@ const MainSchema = new mongoose.Schema({
 }, {versionKey: false});
 
 const EventSchema = new mongoose.Schema({
-    // 0 = 시작,
-    // 1 ~ 999 랜덤 인카운터
-    // 1000 ~ 3999 연결용이벤트
-    // 4001 ~  엔딩용 이벤트
+    event_type: {
+        type: String,
+        enum: ['random', 'link', 'ending'],
+        required: true
+    },
     event_code: {
         type: Number,
         required: true,
@@ -55,15 +60,65 @@ const EventSchema = new mongoose.Schema({
     },
     title: String,
     contents: String,
-    l_text: String,
-    r_text: String,
-    l_result: [Number],
-    r_result: [Number],
-    next_event: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: 'event',
-        default: null
+    prerequisites: [String], 
+    choices: { //좌우선택 텍스트
+        left: String,
+        right: String
     },
+    rewards: {
+        left: { //좌 선택
+            fuel: {
+                type: Number,
+                default: 0
+            },
+            resource: {
+                type: Number,
+                default: 0
+            },
+            technology: {
+                type: Number,
+                default: 0
+            },
+            risk: {
+                type: Number,
+                default: 0
+            }
+        },
+        right: { //우 선택
+            fuel: {
+                type: Number,
+                default: 0
+            },
+            resource: {
+                type: Number,
+                default: 0
+            },
+            technology: {
+                type: Number,
+                default: 0
+            },
+            risk: {
+                type: Number,
+                default: 0
+            }
+        }
+    },
+    next_event: { //선택후 연계용 이벤트
+        left: {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: 'event',
+            default: null
+        },
+        right: {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: 'event',
+            default: null
+        },
+    },
+    is_ending: {
+        type: Boolean,
+        default: false,
+    }
 }, {versionKey: false});
 
 // model을 export 해주기
