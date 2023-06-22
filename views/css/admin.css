@@ -64,6 +64,8 @@ input[type=number]::-webkit-outer-spin-button {
 .right-stats, .right-next {
     display: none;
 }
-.prerequisites {
+
+.over, .under, .hold {
     margin-bottom: 0.5rem;
+    display: none;
 }

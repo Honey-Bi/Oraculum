@@ -58,7 +58,7 @@ router.get('/events', admin, async (req, res) => {
             return res.redirect('/404');
         }
         const data = await Main.MainEvent.find().sort({event_code:1});
-        let notView = ['_id', 'contents', 'next_event', 'rewards', 'choices']
+        let notView = ['_id', 'contents', 'next_event', 'rewards', 'choices', 'prerequisites']
 
         res.render('./admin/events', {
             event: data, 
@@ -85,6 +85,7 @@ router.post('/deleteOne', admin, async (req, res) => {
             });
         }
 
+        console
         if (req.body.type == 'users') {
             await User.deleteOne({_id: req.body.id});
             await Main.Main.deleteOne({userId: req.body.id});
@@ -120,14 +121,30 @@ router.post('/actionEvent', admin, async (req, res) =>  {
         
         
         const formData = req.body.formData;
-        const eventCount = await Main.MainEvent.find({event_type: formData.eventType}).count()
+        
+        const eventCount = (req.body.type == 'update') ? formData.eventCode : await Main.MainEvent.find({event_type: formData.eventType}).count();
 
         let data = {
             event_type: formData.eventType,
             event_code: eventCount,
             title: formData.eventTitle,
             contents: formData.eventContents,
-            prerequisites: formData.prerequisites,
+            prerequisites: {
+                over: {
+                    fuel: formData.over_fuel,
+                    resource: formData.over_resource,
+                    technology: formData.over_technology,
+                    risk: formData.over_risk
+                },
+                under: {
+                    fuel: formData.under_fuel,
+                    resource: formData.under_resource,
+                    technology: formData.under_technology,
+                    risk: formData.under_risk
+                },
+                hold: formData.prerequisites
+            }
+            ,
             choices: {
                 left: formData.choice_left,
                 right: formData.choice_right
@@ -185,6 +202,48 @@ router.get('/getEvent', async (req, res) => {
             message: '실패했습니다.',
         });;
     }
+});
+
+router.get('/addEvent', async (req, res) => {
+    await new Main.MainEvent({
+        event_type: 'random',
+        event_code: 0,
+        title: 'Test Event 1',
+        contents: 'This is a test event 1.',
+        prerequisites: {
+            over: {
+                fuel: 0,
+                resource: 0,
+                technology: 0,
+                risk: 0
+            },
+            under: {
+                fuel: 100,
+                resource: 100,
+                technology: 100,
+                risk: 100
+            },
+            hold: []
+        },
+        choices: {
+            left: 'Option 1',
+            right: 'Option 2',
+        },
+        rewards: {
+            left: {
+                fuel: 10,
+                resource: 0,
+                technology: 0,
+                risk: 0,
+            },
+            right: {
+                fuel: 0,
+                resource: 20,
+                technology: 0,
+                risk: 0,
+            },
+        },
+    }).save();
 });
 
 module.exports = router;

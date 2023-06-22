@@ -52,11 +52,26 @@ $('.addEvent').click(function() {
     };
     
     actionType = "insert";
+    $('#eventCode').val('');
     $('#editBtn').css('display', 'none');
     $('#saveBtn').css('display', 'block');
 
-    deleteAllItem()
-    $('input[name=prerequisites]').val(''); 
+    $('#over').prop("checked", false);
+    $('#under').prop("checked", false);
+    $('#hold').prop("checked", false);
+    $('.over').css('display', 'none');
+    $('.under').css('display', 'none');
+    $('.hold').css('display', 'none');
+    deleteAllItem();
+
+    $('.overStats').each((index, item) => {
+        $(item).val('')
+    });
+
+    $('.underStats').each((index, item) => {
+        $(item).val('')
+    });
+    $('input[name=prerequisites]').val();
 
     $('#eventType').val('random').prop('selected', true);
     $('#eventTitle').val('');
@@ -81,7 +96,11 @@ jQuery.fn.serializeObject = function() {
                 obj = {};
                 jQuery.each(arr, function() {
                     if (obj[this.name]) { //동일한 name이 존재할시 배열로 바꿈
-                        obj[this.name] = [obj[this.name], this.value];
+                        if (!Array.isArray(obj[this.name])) {
+                            obj[this.name] = [obj[this.name], this.value]
+                        } else {
+                            obj[this.name].push(this.value);
+                        }
                     } else {
                         obj[this.name] = this.value;
                     }
@@ -95,7 +114,7 @@ jQuery.fn.serializeObject = function() {
 };
 
 $('#eventForm').submit(function() {
-    console.log($(this).serializeObject());
+    // console.log($(this).serializeObject());
 
     $.ajax({
         method:'POST',                                           
@@ -108,8 +127,8 @@ $('#eventForm').submit(function() {
         },
         dataType: "json",
         success: function (result) {
-            alert('code: ' + result.code + '\n' + result.message);
-            return location.reload();
+            // alert('code: ' + result.code + '\n' + result.message);
+            // return location.reload();
         },
 
         error: function(result, status, error) {
@@ -129,6 +148,8 @@ $('.editEvent').click(function(){
         url: "/admin/getEvent?id="+currentId,
         dataType: "json",
         success: function(result) {
+            console.log(result);
+            $('#eventCode').val(result.event_code);
             $('#eventType').val(result.event_type).prop("select", true);
             $('#eventTitle').val(result.title);
             $('#eventContents').val(result.contents);
@@ -136,11 +157,21 @@ $('.editEvent').click(function(){
             $('#r_text').val(result.choices.right);
 
             deleteAllItem()
-            $('input[name=prerequisites]').val(result.prerequisites[0]);
-            for (let i = 1; i < result.prerequisites.length; i++) {
-                addItem(result.prerequisites[i]);
+            count = 0;
+            for (i in result.prerequisites.over) {
+                $($('.overStats')[count++]).val(result.prerequisites.over[i]);
             }
-            
+            count = 0;
+            for (i in result.prerequisites.under) {
+                $($('.underStats')[count++]).val(result.prerequisites.under[i]);
+            }
+
+            $('input[name=prerequisites]').val(result.prerequisites.hold[0]);
+            for (let i = 1; i < result.prerequisites.hold.length; i++) {
+                addItem(result.prerequisites.hold[i])
+            }
+
+
             let rewards = [];
             for (i in result.rewards) {
                 for(j in result.rewards[i]) {
@@ -189,19 +220,28 @@ $('.delete').click(function(){
     });
 });
 
+$('#over, #under, #hold').click(function() {
+    let className = $(this).attr('id');
+    if ($(this).is(':checked')) {
+        $('.'+className).css('display', 'flex');
+    } else {
+        $('.'+className).css('display', 'none');
+    }
+});
+
 function addItem(text) {
-    let content = '<div class="form-group prerequisites"><div class="input-group">';
-        content += '<input type="text" name="prerequisites" id="" autocomplete="off" class="form-control" value="'+ text +'">';
-        content += '<button class="btn btn-outline-danger" onclick="deleteItem(this)" type="button" id="deletePrerequisites">delete</button></div</div>';
-    $('.prerequisites:last').after(content);
+    let content = '<div class="input-group hold" style="display:flex">';
+        content += '<input type="text" name="prerequisites" id="" autocomplete="off" class="form-control prerequisites" value="'+ text +'">';
+        content += '<button class="btn btn-outline-danger" onclick="deleteItem(this)" type="button" id="deletePrerequisites">delete</button></div';
+    $('.hold:last').after(content);
 }
 
 function deleteItem(item) {
-    $(item).parent().parent().remove();
+    $(item).parent().remove();
 }
 
 function deleteAllItem() {
-    $('.prerequisites').each((index, item) => {
+    $('.hold').each((index, item) => {
         if(index > 0) $(item).remove();
     });
 }
