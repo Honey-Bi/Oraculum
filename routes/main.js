@@ -24,24 +24,25 @@ router.post('/select', auth, async (req, res) =>{
 
         let stats = {
             fuel: main.fuel + rewards.fuel,
-            resourse:  main.resourse + rewards.resourse,
+            resource:  main.resource + rewards.resource,
             technology: main.technology + rewards.technology,
             risk: main.risk + rewards.risk,
         }
 
-        console.log(stats);
-
-        let nextEventId = isOver(stats); // 게임오버인지 확인
-        if (nextEventId) { // 게임 오버시
-            nextEvent = await Main.MainEvent.findOne({
-                event_type: 'ending', event_code: nextEventId
+        // let nextEventId = isOver(stats); // 게임오버인지 확인
+        // if (nextEventId) { // 게임 오버시
+        //     nextEvent = await Main.MainEvent.findOne({
+        //         event_type: 'ending', event_code: nextEventId
+        //     });
+        // } else 
+        if (nextEvent === null) { //정해진 다음 이벤트가 없을경우
+            nextEvent = await Main.MainEvent.find({
+                event_type: 'random', 
             });
-        } else if (nextEvent === null){ //정해진 다음 이벤트가 없을경우
-            nextEvent = await Main.MainEvent.findOne({
-                event_type: 'random'
-            }).skip(getRandom());
         }
-        console.log(nextEvent._id);
+        console.log(nextEvent.title);
+
+        // db.events.find({event_type: 'random'})
 
         // await Main.Main.updateOne({
         //     _id: main._id
@@ -50,7 +51,7 @@ router.post('/select', auth, async (req, res) =>{
         //         turn: ++main.turn,
         //         nowEvent: nextEvent._id,
         //         fuel: stats.fuel,
-        //         resourse: stats.resourse,
+        //         resource: stats.resource,
         //         technology: stats.technology,
         //         risk: stats.risk
         //     }
@@ -68,7 +69,7 @@ router.post('/getView', auth, async (req, res) => {
             userId: req.decoded.user.id
         }, {
             fuel: 1,
-            resourse: 1,
+            resource: 1,
             technology: 1,
             risk: 1
         }).populate('nowEvent', {
@@ -104,19 +105,9 @@ function isOver(stats) {
 }
 
 function getRandom() {
-    let min = 1;
-    let max = Main.MainEvent.find({event_code:'random'}).count();
+    let min = 0;  // 랜덤 최소치
+    let max = 2;  // 이벤트 갯수 
     return Math.floor(Math.random() * (max+1 - min) + min);
 }   
-
-function arrayMax(arr) {
-    var len = arr.length, max = -Infinity;
-    while (len--) {
-        if (arr[len] > max) {
-            max = arr[len];
-        }
-    }
-    return arr.indexOf(max);
-};
 
 module.exports = router;
