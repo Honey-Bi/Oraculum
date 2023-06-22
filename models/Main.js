@@ -23,7 +23,7 @@ const MainSchema = new mongoose.Schema({
         min: 0,
         max: 100
     },  
-    resourse: {
+    resource: {
         type: Number,
         default: 50,
         min: 0,
