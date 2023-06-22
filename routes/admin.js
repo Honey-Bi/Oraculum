@@ -7,7 +7,7 @@ const { default: mongoose } = require('mongoose');
 router.get('/', admin, async (req, res) => {
     const id = req.decoded.user.id;
     try {
-        let user = await User.findOne({ _id: id }) ;
+        const user = await User.findOne({ _id: id }) ;
         if (user.access == 1) {
             res.render('./admin/', {});
         } else {
@@ -21,7 +21,7 @@ router.get('/', admin, async (req, res) => {
 router.get('/users', admin, async (req, res) => {
     const id = req.decoded.user.id;
     try {
-        let user = await User.findOne({ _id: id }, {access:1}) ;
+        const user = await User.findOne({ _id: id }, {access:1}) ;
         if (user.access != 1) {
             return res.redirect('/404');
         }
@@ -72,7 +72,7 @@ router.get('/events', admin, async (req, res) => {
 
 router.post('/deleteOne', admin, async (req, res) => {
     try {
-        let userId = await User.findOne({ _id: req.decoded.user.id }, {access: 1}) ;
+        const userId = await User.findOne({ _id: req.decoded.user.id }, {access: 1}) ;
         let deleteId;
         if (req.body.type == 'users') {
             deleteId = await User.findOne({ _id: req.body.id}, {access: 1});  
@@ -118,12 +118,16 @@ router.post('/actionEvent', admin, async (req, res) =>  {
             });
         }
         
+        
         const formData = req.body.formData;
+        const eventCount = await Main.MainEvent.find({event_type: formData.eventType}).count()
+
         let data = {
             event_type: formData.eventType,
-            event_code: formData.eventCode,
+            event_code: eventCount,
             title: formData.eventTitle,
             contents: formData.eventContents,
+            prerequisites: formData.prerequisites,
             choices: {
                 left: formData.choice_left,
                 right: formData.choice_right
@@ -147,7 +151,7 @@ router.post('/actionEvent', admin, async (req, res) =>  {
                 right: (formData.rightEvent == 'default')? null : formData.rightEvent
             }
         }
-        
+
         if(req.body.type == 'update') {
             await Main.MainEvent.findOneAndUpdate({_id: req.body.id}, {$set: data});
             console.log('event update accept');
@@ -172,7 +176,7 @@ router.post('/actionEvent', admin, async (req, res) =>  {
 
 router.get('/getEvent', async (req, res) => {
     try {
-        let events = await Main.MainEvent.findById(req.query.id);;
+        const events = await Main.MainEvent.findById(req.query.id);;
         return res.status(200).send(events);
     } catch (error) {
         console.log(error);
