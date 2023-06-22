@@ -2,13 +2,13 @@ const mongoose = require("mongoose"); // mongoose 불러오기
 
 // Schema 생성
 const MainSchema = new mongoose.Schema({
-    userId: {
+    userId: { //유저 스키마
         type: mongoose.Schema.Types.ObjectId,
         ref: 'user',
         require: true,
         unique: true
     },
-    nowEvent: {
+    nowEvent: { //현재 진행중인 이벤트
         type: mongoose.Schema.Types.ObjectId,
         ref: 'event',
         require: true
@@ -60,7 +60,45 @@ const EventSchema = new mongoose.Schema({
     },
     title: String,
     contents: String,
-    prerequisites: [String], 
+    prerequisites: {
+        over: {
+            fuel: {
+                type: Number,
+                default: 0
+            },
+            resource: {
+                type: Number,
+                default: 0
+            },
+            technology: {
+                type: Number,
+                default: 0
+            },
+            risk: {
+                type: Number,
+                default: 0
+            }
+        },
+        under: {
+            fuel: {
+                type: Number,
+                default: 100
+            },
+            resource: {
+                type: Number,
+                default: 100
+            },
+            technology: {
+                type: Number,
+                default: 100
+            },
+            risk: {
+                type: Number,
+                default: 100
+            }
+        },
+        hold: [String]
+    }, 
     choices: { //좌우선택 텍스트
         left: String,
         right: String
