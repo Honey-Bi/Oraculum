@@ -55,8 +55,10 @@ $('.addEvent').click(function() {
     $('#editBtn').css('display', 'none');
     $('#saveBtn').css('display', 'block');
 
+    deleteAllItem()
+    $('input[name=prerequisites]').val(''); 
+
     $('#eventType').val('random').prop('selected', true);
-    $('#eventCode').val('');
     $('#eventTitle').val('');
     $('#eventContents').val('');
     $('#l_text').val('');
@@ -78,20 +80,22 @@ jQuery.fn.serializeObject = function() {
             if (arr) {
                 obj = {};
                 jQuery.each(arr, function() {
-                    obj[this.name] = this.value;
+                    if (obj[this.name]) { //동일한 name이 존재할시 배열로 바꿈
+                        obj[this.name] = [obj[this.name], this.value];
+                    } else {
+                        obj[this.name] = this.value;
+                    }
                 });
             }//if ( arr ) {
         }
     } catch (e) {
         alert(e.message);
-    } finally {
     }
- 
     return obj; 
 };
 
-
 $('#eventForm').submit(function() {
+    console.log($(this).serializeObject());
 
     $.ajax({
         method:'POST',                                           
@@ -104,21 +108,18 @@ $('#eventForm').submit(function() {
         },
         dataType: "json",
         success: function (result) {
-            return alert('code: ' + result.code + '\n' + result.message);
+            alert('code: ' + result.code + '\n' + result.message);
+            return location.reload();
         },
 
         error: function(result, status, error) {
             return alert('code: ' + status+'\n' + error);
         }
     });
-    location.reload();
 });
 
 let currentId;
 $('.editEvent').click(function(){
-    if (actionType == "update") {
-        return;
-    }
     actionType = "update";
     $('#editBtn').css('display', 'block');
     $('#saveBtn').css('display', 'none');
@@ -129,11 +130,16 @@ $('.editEvent').click(function(){
         dataType: "json",
         success: function(result) {
             $('#eventType').val(result.event_type).prop("select", true);
-            $('#eventCode').val(result.event_code*1);
             $('#eventTitle').val(result.title);
             $('#eventContents').val(result.contents);
             $('#l_text').val(result.choices.left);
             $('#r_text').val(result.choices.right);
+
+            deleteAllItem()
+            $('input[name=prerequisites]').val(result.prerequisites[0]);
+            for (let i = 1; i < result.prerequisites.length; i++) {
+                addItem(result.prerequisites[i]);
+            }
             
             let rewards = [];
             for (i in result.rewards) {
@@ -182,3 +188,20 @@ $('.delete').click(function(){
         }
     });
 });
+
+function addItem(text) {
+    let content = '<div class="form-group prerequisites"><div class="input-group">';
+        content += '<input type="text" name="prerequisites" id="" autocomplete="off" class="form-control" value="'+ text +'">';
+        content += '<button class="btn btn-outline-danger" onclick="deleteItem(this)" type="button" id="deletePrerequisites">delete</button></div</div>';
+    $('.prerequisites:last').after(content);
+}
+
+function deleteItem(item) {
+    $(item).parent().parent().remove();
+}
+
+function deleteAllItem() {
+    $('.prerequisites').each((index, item) => {
+        if(index > 0) $(item).remove();
+    });
+}

@@ -49,7 +49,7 @@ hr {
 .table td, .table th { 
     vertical-align : middle;
 }
-#addContents {
+#eventContents {
     min-height: 3rem;
 }
 input[type=number]::-webkit-inner-spin-button, 
@@ -63,4 +63,7 @@ input[type=number]::-webkit-outer-spin-button {
 }
 .right-stats, .right-next {
     display: none;
+}
+.prerequisites {
+    margin-bottom: 0.5rem;
 }

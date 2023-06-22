@@ -75,13 +75,16 @@
                                 <option value="ending">ending</option>
                             </select>
                         </div>
-                        <div class="form-group">
-                            <label class="col-form-label">event_code</label>
-                            <input type="number" class="form-control" name="eventCode" id="eventCode" min="0" required>
+                        <div class="form-group prerequisites">
+                            <label class="col-form-label">prerequisites</label>
+                            <div class="input-group ">
+                                <input type="text" name="prerequisites" id="" class="form-control" autocomplete="off">
+                                <button class="btn btn-outline-primary" type="button" id="addPrerequisites" onclick="addItem('')">add</button>
+                            </div>
                         </div>
                         <div class="form-group">
                             <label class="col-form-label">title</label>
-                            <input type="text" class="form-control" name="eventTitle" id="eventTitle" required>
+                            <input type="text" class="form-control" autocomplete="off" name="eventTitle" id="eventTitle" required>
                         </div>
                         <div class="form-group">
                             <label class="col-form-label">contents</label>
@@ -90,8 +93,8 @@
                         <div class="form-gorup">
                             <label class="col-form-label">left & right text</label>
                             <div class="input-group">
-                                <input type="text" class="form-control" name="choice_left" id="l_text" placeholder="l_text" required>
-                                <input type="text" class="form-control" name="choice_right" id="r_text" placeholder="r_text" required>
+                                <input type="text" class="form-control" autocomplete="off" name="choice_left" id="l_text" placeholder="l_text" required>
+                                <input type="text" class="form-control" autocomplete="off" name="choice_right" id="r_text" placeholder="r_text" required>
                             </div>
                         </div>
                         <div class="form-gorup">
