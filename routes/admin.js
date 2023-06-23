@@ -73,7 +73,7 @@ router.get('/events', admin, async (req, res) => {
 router.post('/deleteOne', admin, async (req, res) => {
     try {
         const userId = await User.findOne({ _id: req.decoded.user.id }, {access: 1}) ;
-        let deleteId;
+        let deleteId = {access: 0};
         if (req.body.type == 'users') {
             deleteId = await User.findOne({ _id: req.body.id}, {access: 1});  
         } 
@@ -85,12 +85,22 @@ router.post('/deleteOne', admin, async (req, res) => {
             });
         }
 
-        console
         if (req.body.type == 'users') {
-            await User.deleteOne({_id: req.body.id});
+            await User.deleteOne({_id: req.body.id})    ;
             await Main.Main.deleteOne({userId: req.body.id});
         } 
         if(req.body.type == 'events') {
+            const delEvent = await Main.MainEvent.findById(req.body.id);
+            const renameCode = await Main.MainEvent.find({
+                event_type: delEvent.event_type,
+                event_code: {'$gt': delEvent.event_code}
+            });
+            
+            for (let i = 0; i < renameCode.length; i++) {
+                const rename = renameCode[i];
+                renameCode[i].event_code = renameCode[i].event_code -1
+                await rename.save();
+            }
             await Main.MainEvent.deleteOne({_id: req.body.id})
         }
 
@@ -119,7 +129,6 @@ router.post('/actionEvent', admin, async (req, res) =>  {
             });
         }
         
-        
         const formData = req.body.formData;
         
         const eventCount = (req.body.type == 'update') ? formData.eventCode : await Main.MainEvent.find({event_type: formData.eventType}).count();
@@ -137,14 +146,13 @@ router.post('/actionEvent', admin, async (req, res) =>  {
                     risk: (formData.over_risk) ? formData.over_risk : 0
                 },
                 under: {
-                    fuel: (formData.under_fuel) ? formData.under_fuel : 0,
-                    resource: (formData.under_resource) ? formData.under_resource : 0,
-                    technology: (formData.under_technology) ? formData.under_technology : 0,
-                    risk: (formData.under_risk) ? formData.under_risk : 0
+                    fuel: (formData.under_fuel) ? formData.under_fuel : 100,
+                    resource: (formData.under_resource) ? formData.under_resource : 100,
+                    technology: (formData.under_technology) ? formData.under_technology : 100,
+                    risk: (formData.under_risk) ? formData.under_risk : 100
                 },
                 hold: formData.prerequisites
-            }
-            ,
+            },
             choices: {
                 left: formData.choice_left,
                 right: formData.choice_right
@@ -205,46 +213,46 @@ router.get('/getEvent', async (req, res) => {
     }
 });
 
-router.get('/addEvent', async (req, res) => {
-    await new Main.MainEvent({
-        event_type: 'random',
-        event_code: 0,
-        title: 'Test Event 1',
-        contents: 'This is a test event 1.',
-        prerequisites: {
-            over: {
-                fuel: 0,
-                resource: 0,
-                technology: 0,
-                risk: 0
-            },
-            under: {
-                fuel: 100,
-                resource: 100,
-                technology: 100,
-                risk: 100
-            },
-            hold: []
-        },
-        choices: {
-            left: 'Option 1',
-            right: 'Option 2',
-        },
-        rewards: {
-            left: {
-                fuel: 10,
-                resource: 0,
-                technology: 0,
-                risk: 0,
-            },
-            right: {
-                fuel: 0,
-                resource: 20,
-                technology: 0,
-                risk: 0,
-            },
-        },
-    }).save();
-});
+// router.get('/addEvent', async (req, res) => {
+//     await new Main.MainEvent({
+//         event_type: 'random',
+//         event_code: 0,
+//         title: 'Test Event 1',
+//         contents: 'This is a test event 1.',
+//         prerequisites: {
+//             over: {
+//                 fuel: 0,
+//                 resource: 0,
+//                 technology: 0,
+//                 risk: 0
+//             },
+//             under: {
+//                 fuel: 100,
+//                 resource: 100,
+//                 technology: 100,
+//                 risk: 100
+//             },
+//             hold: []
+//         },
+//         choices: {
+//             left: 'Option 1',
+//             right: 'Option 2',
+//         },
+//         rewards: {
+//             left: {
+//                 fuel: 10,
+//                 resource: 0,
+//                 technology: 0,
+//                 risk: 0,
+//             },
+//             right: {
+//                 fuel: 0,
+//                 resource: 20,
+//                 technology: 0,
+//                 risk: 0,
+//             },
+//         },
+//     }).save();
+// });
 
 module.exports = router;
