@@ -131,16 +131,16 @@ router.post('/actionEvent', admin, async (req, res) =>  {
             contents: formData.eventContents,
             prerequisites: {
                 over: {
-                    fuel: formData.over_fuel,
-                    resource: formData.over_resource,
-                    technology: formData.over_technology,
-                    risk: formData.over_risk
+                    fuel: (formData.over_fuel) ? formData.over_fuel : 0,
+                    resource: (formData.over_resource) ? formData.over_resource : 0,
+                    technology: (formData.over_technology) ? formData.over_technology : 0,
+                    risk: (formData.over_risk) ? formData.over_risk : 0
                 },
                 under: {
-                    fuel: formData.under_fuel,
-                    resource: formData.under_resource,
-                    technology: formData.under_technology,
-                    risk: formData.under_risk
+                    fuel: (formData.under_fuel) ? formData.under_fuel : 0,
+                    resource: (formData.under_resource) ? formData.under_resource : 0,
+                    technology: (formData.under_technology) ? formData.under_technology : 0,
+                    risk: (formData.under_risk) ? formData.under_risk : 0
                 },
                 hold: formData.prerequisites
             }
@@ -151,22 +151,23 @@ router.post('/actionEvent', admin, async (req, res) =>  {
             },
             rewards: {
                 left: {
-                    fuel: formData.left_fuel,
-                    resource:formData.left_resource,
-                    technology: formData.left_technology,
-                    risk: formData.left_risk,
+                    fuel: (formData.left_fuel) ? formData.left_fuel : 0,
+                    resource:(formData.left_resource) ? formData.left_resource : 0,
+                    technology: (formData.left_technology) ? formData.left_technology : 0,
+                    risk: (formData.left_risk) ? formData.left_risk : 0,
                 },
                 right: {
-                    fuel: formData.right_fuel,
-                    resource: formData.right_resource,
-                    technology: formData.right_technology,
-                    risk: formData.right_risk
+                    fuel: (formData.right_fuel) ? formData.right_fuel : 0,
+                    resource: (formData.right_resource) ? formData.right_resource : 0,
+                    technology: (formData.right_technology) ? formData.right_technology : 0,
+                    risk: (formData.right_risk) ? formData.right_risk : 0
                 }
             },
             next_event: {
                 left: (formData.leftEvent == 'default')? null : formData.leftEvent,
                 right: (formData.rightEvent == 'default')? null : formData.rightEvent
-            }
+            },
+            is_ending: (formData.eventType=='ending') ? true : false
         }
 
         if(req.body.type == 'update') {
