@@ -132,7 +132,7 @@ $('.custom-dupilication-button').click(function(){
             input: name,
         },
         dataType: "json",
-        success: function(result){
+        success: function (result) {
             if (result) {
                 $('#errName').text("이미 사용중인 닉네임입니다.");
                 $('#errName').css('color', '#ff3f3f');
@@ -147,8 +147,8 @@ $('.custom-dupilication-button').click(function(){
                 return true;
             }
         },
-        error: function(result, status, error) {
-            console.log(error)
+        error: function (result, status, error) {
+            console.log(error);
             return false;
         }
     });
@@ -160,9 +160,6 @@ $("#btn-register").click(function(){
     let inputId = $('#typeEmailX').val(),
         password = $('#typePasswordX').val(),
         inputName = $('#typeNameX').val();
-    console.log(inputName);
-    console.log(password);
-    console.log(inputId);
 
     if (!email_check(inputId) && !password_check(password) && !name_check(inputName)){
         return;
