@@ -90,16 +90,16 @@
                                 </label>
                             </div>
                             <div class="input-group over">
-                                <input type="number" class="form-control overStats" min="0" max="100" name="over_fuel" placeholder="연료">
-                                <input type="number" class="form-control overStats" min="0" max="100" name="over_resource" placeholder="자원">
-                                <input type="number" class="form-control overStats" min="0" max="100" name="over_technology" placeholder="기술">
-                                <input type="number" class="form-control overStats" min="0" max="100" name="over_risk" placeholder="위험">
+                                <input type="number" class="form-control overStats" min="-999" max="99" name="over_fuel" placeholder="연료">
+                                <input type="number" class="form-control overStats" min="-999" max="99" name="over_resource" placeholder="자원">
+                                <input type="number" class="form-control overStats" min="-999" max="99" name="over_technology" placeholder="기술">
+                                <input type="number" class="form-control overStats" min="-999" max="99" name="over_risk" placeholder="위험">
                             </div>
                             <div class="input-group under">
-                                <input type="number" class="form-control underStats" min="0" max="100" name="under_fuel" placeholder="연료">
-                                <input type="number" class="form-control underStats" min="0" max="100" name="under_resource" placeholder="자원">
-                                <input type="number" class="form-control underStats" min="0" max="100" name="under_technology" placeholder="기술">
-                                <input type="number" class="form-control underStats" min="0" max="100" name="under_risk" placeholder="위험">
+                                <input type="number" class="form-control underStats" min="1" max="999" name="under_fuel" placeholder="연료">
+                                <input type="number" class="form-control underStats" min="1" max="999" name="under_resource" placeholder="자원">
+                                <input type="number" class="form-control underStats" min="1" max="999" name="under_technology" placeholder="기술">
+                                <input type="number" class="form-control underStats" min="1" max="999" name="under_risk" placeholder="위험">
                             </div>
                             <div class="input-group hold">
                                 <input type="text" class="form-control" name="prerequisites">
@@ -160,16 +160,18 @@
                                     </label>
                                 </div>
                                 <select class="form-control left-next" name="leftEvent" id="leftEvent" required>
-                                    <option value="default">defulat</option>
+                                    <option value="default">default</option>
                                     <% for (i of event) { %>
+                                        <% if(i.event_type == 'link') { %>
+                                            
                                         <option value="<%= i._id %>"><%= i.event_code %> <%= i.title %></option>
-                                    <% } %>
+                                    <% } }%>
                                 </select>
                                 <select class="form-control right-next" name="rightEvent" id="rightEvent" required>
-                                    <option value="default">defulat</option>
-                                    <% for (i of event) { %>
+                                    <option value="default">default</option>
+                                    <% for (i of event) { if(i.event_type == 'link') { %>
                                         <option value="<%= i._id %>"><%= i.event_code %> <%= i.title %></option>
-                                    <% } %>
+                                    <% } } %>
                                 </select>
                             </div>
                         </div>
