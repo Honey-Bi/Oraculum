@@ -118,7 +118,7 @@ router.post("/register-confirm", async (req, res) => {
 
         let id = user._id;
         let event = await Main.MainEvent.findOne({ 
-            event_type: 'random',
+            event_type: 'link',
             event_code: 0 // 시작 이벤트
         })._id;
 
@@ -134,15 +134,15 @@ router.post("/register-confirm", async (req, res) => {
     }
 });
 
-router.get('/logout', async (req, res) => {
+router.get('/logout', (req, res) => {
     var session = req.session;
     try {
         if (session.token) { //세션정보가 존재하는 경우
-            await req.session.destroy(function (err) {
+            req.session.destroy(function (err) {
                 if (err)
-                    console.log(err)
+                    console.log(err);
                 else {
-                  res.redirect('/');
+                    res.redirect('/');
                 }
             })
         }
@@ -156,4 +156,10 @@ router.get('/mypage', auth, (req, res) => {
     res.render('./account/mypage', { title: 'My page', isLogin: userStatus.isLogin(req) });
 });
 
+router.get('/pw-forgot', (req, res) => {
+    res.render('./account/forgotPw', {
+        title: 'Forgot PassWord',
+        isLogin: false
+    })
+});
 module.exports = router;
