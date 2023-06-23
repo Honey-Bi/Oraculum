@@ -7,12 +7,6 @@ $(window).resize(function() {
     selectItem.css('height', selectItem.css('width'));
 });
 
-
-let fuel = $('#fuel'),
-    resource = $('#resource'),
-    technology = $('#technology'),
-    risk = $('#risk');
-
 $(document).ready(function () {
     setView();
 });
@@ -24,10 +18,11 @@ function setView() {
         async: true,
         dataType: 'json',
         success: function(result){
+            // console.log(result);
             setContentView(result.nowEvent.contents);
             setStatsView(
                 result.fuel, 
-                result.resourse, 
+                result.resource, 
                 result.technology, 
                 result.risk
             );
@@ -40,18 +35,49 @@ function setView() {
         }
     });
 }
+
 function setContentView(text) {
     $('.contents').text(text);
-}
-function setStatsView(fuel, resource, technology, risk) {
-    $('#fuelFill').animate({height: 100-fuel + '%'}, 500);
-    $('#resourceFill').animate({height: 100-resource + '%'}, 500);
-    $('#technologyFill').animate({height: 100-technology + '%'}, 500);
-    $('#riskFill').animate({height: 100-risk + '%'}, 500);
 }
 function setSelectView(left, right) {
     $('#selectLeft').text(left);
     $('#selectRight').text(right);
+}
+
+var plusColor = '#00C851';
+var minusColor = '#ff4444';
+
+let fuel_stock = 50,
+    resource_stock = 50,
+    technology_stock = 50,
+    risk_stock = 50;
+
+function setStatsView(fuel, resource, technology, risk) {
+
+    if (fuel_stock > 100-fuel) $('#fuel').animate({color: plusColor}, 300);
+    else if (fuel_stock < 100-fuel) $('#fuel').animate({color: minusColor}, 300);
+    $('#fuelFill').animate({height: 100-fuel + '%',}, 600 , 'easeOutQuart');
+    $('#fuel').animate({color: "#fff"}, 300);
+
+    if (resource_stock > 100-resource) $('#resource').animate({color: plusColor}, 300)
+    else if (resource_stock < 100-resource) $('#resource').animate({color: minusColor}, 300)
+    $('#resourceFill').animate({height: 100-resource + '%'}, 600, 'easeOutQuart');
+    $('#resource').animate({color: "#fff"});
+
+    if (technology_stock > 100-technology) $('#technology').animate({color: plusColor}, 300)
+    else if (technology_stock < 100-technology) $('#technology').animate({color: minusColor}, 300)
+    $('#technologyFill').animate({height: 100-technology + '%'}, 600, 'easeOutQuart');
+    $('#technology').animate({color: "#fff"});
+    
+    if (risk_stock > 100-risk) $('#risk').animate({color: plusColor}, 300)
+    else if (risk_stock < 100-risk) $('#risk').animate({color: minusColor}, 300)
+    $('#riskFill').animate({height: 100-risk + '%'}, 600, 'easeOutQuart');
+    $('#risk').animate({color: "#fff"});
+    
+    fuel_stock = 100 - fuel;
+    resource_stock = 100 - resource;
+    technology_stock = 100 - technology;
+    risk_stock = 100 - risk;
 }
 
 $('.selectBox').draggable({
