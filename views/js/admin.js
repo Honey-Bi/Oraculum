@@ -64,16 +64,14 @@ $('.addEvent').click(function() {
     $('.hold').css('display', 'none');
     deleteAllItem();
 
-    $('.overStats').each((index, item) => {
+    $('.overStats, .underStats').each((index, item) => {
         $(item).val('')
     });
 
-    $('.underStats').each((index, item) => {
-        $(item).val('')
-    });
     $('input[name=prerequisites]').val();
 
     $('#eventType').val('random').prop('selected', true);
+    $('#eventType').removeAttr('disabled');
     $('#eventTitle').val('');
     $('#eventContents').val('');
     $('#l_text').val('');
@@ -127,8 +125,8 @@ $('#eventForm').submit(function() {
         },
         dataType: "json",
         success: function (result) {
-            // alert('code: ' + result.code + '\n' + result.message);
-            // return location.reload();
+            alert('code: ' + result.code + '\n' + result.message);
+            return location.reload();
         },
 
         error: function(result, status, error) {
@@ -148,7 +146,8 @@ $('.editEvent').click(function(){
         url: "/admin/getEvent?id="+currentId,
         dataType: "json",
         success: function(result) {
-            console.log(result);
+            // console.log(result);
+            $('#eventType').attr('disabled', true);
             $('#eventCode').val(result.event_code);
             $('#eventType').val(result.event_type).prop("select", true);
             $('#eventTitle').val(result.title);
