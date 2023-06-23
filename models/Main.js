@@ -19,32 +19,25 @@ const MainSchema = new mongoose.Schema({
     },
     fuel: {
         type: Number,
-        default: 50,
-        min: 0,
-        max: 100
+        default: 0,
     },  
     resource: {
         type: Number,
-        default: 50,
-        min: 0,
-        max: 100
+        default: 0,
     },
     technology: {
         type: Number,
-        default: 50,
-        min: 0,
-        max: 100
+        default: 0,
     },
     risk: {
         type: Number,
-        default: 50,
-        min: 0,
-        max: 100
+        default: 0,
     },
     main_created : {
         type : Date,
         default : Date.now
-    } 
+    },
+    hold: [String]
 
 }, {versionKey: false});
 
