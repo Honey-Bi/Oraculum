@@ -13,11 +13,11 @@ router.post('/select', auth, async (req, res) =>{
         }).populate('nowEvent');
 
 
-        let rewards, nextEvent;
-        if (req.body.isLeft) {
+        var rewards, nextEvent;
+        if (req.body.isLeft == 1) {
             rewards = main.nowEvent.rewards.left;
             nextEvent = main.nowEvent.next_event.left;
-        } else if (req.body.isLeft) {
+        } else {
             rewards = main.nowEvent.rewards.right;
             nextEvent = main.nowEvent.next_event.right;
         }
@@ -29,33 +29,30 @@ router.post('/select', auth, async (req, res) =>{
             risk: main.risk + rewards.risk,
         }
 
-        // let nextEventId = isOver(stats); // 게임오버인지 확인
-        // if (nextEventId) { // 게임 오버시
-        //     nextEvent = await Main.MainEvent.findOne({
-        //         event_type: 'ending', event_code: nextEventId
-        //     });
-        // } else 
-        if (nextEvent === null) { //정해진 다음 이벤트가 없을경우
-            nextEvent = await Main.MainEvent.find({
-                event_type: 'random', 
-            });
+        if (isOver(stats) && !main.nowEvent.is_ending) { // 게임오버인지 확인
+            nextEvent = await Main.MainEvent.find(
+                getQuery('ending', stats)
+            );
+            nextEvent = nextEvent[getRandom(nextEvent.length)];
+            
+            stats.fuel = 0;
+            stats.resource = 0;
+            stats.technology = 0;
+            stats.risk = 0;
+
+        } else if (nextEvent === null) { //정해진 다음 이벤트가 없을경우
+            nextEvent = await Main.MainEvent.find(
+                getQuery('random', stats)
+            );
+            nextEvent = nextEvent[getRandom(nextEvent.length)];
+        } 
+        
+        for (i in stats) {
+            main[i] = stats[i];
         }
-        console.log(nextEvent.title);
+        main.nowEvent = nextEvent;
+        await main.save();
 
-        // db.events.find({event_type: 'random'})
-
-        // await Main.Main.updateOne({
-        //     _id: main._id
-        // }, {
-        //     $set: {
-        //         turn: ++main.turn,
-        //         nowEvent: nextEvent._id,
-        //         fuel: stats.fuel,
-        //         resource: stats.resource,
-        //         technology: stats.technology,
-        //         risk: stats.risk
-        //     }
-        // });
         return res.status(200).send(true);
     } catch (error) {
         console.log(error);
@@ -85,29 +82,30 @@ router.post('/getView', auth, async (req, res) => {
 
 function isOver(stats) {
     for (i in stats) {
-        if(stats[i] >= 100) {
-            ++i;
-            return i;
-        } else if(stats[i] <= 0) {
-            ++i;
-            return i*2;
+        if(stats[i] >= 100 || stats[i] <= 0) {
+            return true;
         }
     }
-    return 0;
-    // 1 = 연료과다
-    // 2 = 자원과다
-    // 3 = 기술과다
-    // 4 = 위험과다
-    // 5 = 연료부족
-    // 6 = 자원부족
-    // 7 = 기술부족
-    // 8 = 위험부족
+    return false;
 }
 
-function getRandom() {
+function getQuery(type, stats) {
+    return {
+        'event_type': type,
+        'prerequisites.over.fuel': {"$lt" : stats.fuel},
+        'prerequisites.under.fuel': {"$gt" : stats.fuel},
+        'prerequisites.over.resource': {"$lt" : stats.resource},
+        'prerequisites.under.resource': {"$gt" : stats.resource},
+        'prerequisites.over.technology': {"$lt" : stats.technology},
+        'prerequisites.under.technology': {"$gt" : stats.technology},
+        'prerequisites.over.risk': {"$lt" : stats.risk},
+        'prerequisites.under.risk': {"$gt" : stats.risk},
+    };
+}
+
+function getRandom(max) {
     let min = 0;  // 랜덤 최소치
-    let max = 2;  // 이벤트 갯수 
-    return Math.floor(Math.random() * (max+1 - min) + min);
+    return Math.floor(Math.random() * (max - min) + min);
 }   
 
 module.exports = router;
