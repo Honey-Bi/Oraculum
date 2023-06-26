@@ -55,3 +55,50 @@ button:disabled {
 input:focus {
     outline: none !important;
 }
+.btn-naver {
+    background-color: #03c75a;
+    color: #fff;
+}
+.btn-social {
+    position: relative;
+    text-align: left;
+    padding-left: 4rem;
+    font-weight: 450;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+.btn-social>:first-child {
+    position: absolute;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    height: 100%;
+    font-size: 1.6em;
+    text-align: center;
+    border-right: 1px solid rgba(0,0,0,0.2);
+}
+.btn-social:hover {
+    color: #fff;
+}
+
+.hr-label {
+    margin: 1.25rem 0;
+}
+.hr-label:before, .hr-label:after {
+    background-color: rgba(166,158,146,0.3);
+    content: '';
+    position: relative;
+    width: 50%;
+    display: inline-block;
+    height: 1px;
+    vertical-align: middle;
+}
+.hr-label:before {
+    right: 0;
+    margin-left: -50%;
+}
+.hr-label:after {
+    left: 0;
+    margin-right: -50%;
+}
