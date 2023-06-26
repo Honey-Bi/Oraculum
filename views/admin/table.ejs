@@ -1,0 +1,41 @@
+<div class="container">
+    <div class="table-title">
+        <span>Event Data</span>
+        <button class="btn btn-primary addEvent" data-toggle="modal" data-target="#<%= type %>Modal">
+            <i class="fa-solid fa-plus"></i>
+        </button>
+    </div>
+    <div class="d-flex overflow-auto">
+        <table class="table table-striped table-dark mt-5">
+            <thead>
+                <tr>
+                    <th scope="col">#</th>
+                    <% for (key of keys) { %>
+                        <th scope="col"><%= key %></th>
+                    <% } %>
+                    <th scope="col">actions</th>   
+                </tr>
+            </thead>
+            <tbody>
+                <% for (i in data) { %>
+                <tr>
+                    <th scope="row"><%= i %></th>  
+                    <% for (key of keys) { %>
+                    <td nowrap>
+                        <%= data[i][key] %>
+                    </td>
+                    <% } %>
+                    <td nowrap>
+                        <button type="button" class="edit edit<%= type %> btn btn-warning" data-toggle="modal" data-target="#<%= type %>Modal" value="<%= data[i]._id %>">
+                            <i class="fa-sharp fa-solid fa-pen-to-square"></i>
+                        </button>
+                        <button type="button" class="delete btn btn-danger" value="<%= data[i]._id %>">
+                            <i class="fa-solid fa-trash"></i>
+                        </button>
+                    </td>
+                </tr>
+                <% } %>
+            </tbody>
+        </table>
+    </div>
+</div>

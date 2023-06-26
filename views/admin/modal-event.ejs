@@ -1,0 +1,128 @@
+<div class="modal fade text-dark text-left" id="eventModal" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Event</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <form id="eventForm" onsubmit="return false;">
+                <input type="hidden" id="eventCode" name="eventCode" val="">
+                <div class="modal-body">
+                    <div class="form-group">
+                        <select class="form-control" name="eventType" id="eventType" required>
+                            <option value="random">random</option>
+                            <option value="link">link</option>
+                            <option value="ending">ending</option>
+                        </select>
+                    </div>
+                    <div class="form-group prerequisites">
+                        <label class="col-form-label">prerequisites</label>
+                        <div class="btn-group input-group">
+                            <label class="btn btn-outline-primary">
+                                <input type="checkbox" id="over"> Over
+                            </label>
+                            <label class="btn btn-outline-primary">
+                                <input type="checkbox" id="under"> Under
+                            </label>
+                            <label class="btn btn-outline-primary">
+                                <input type="checkbox" id="hold"> Hold
+                            </label>
+                        </div>
+                        <div class="input-group over">
+                            <input type="number" class="form-control overStats" min="-999" max="99" name="over_fuel" placeholder="연료">
+                            <input type="number" class="form-control overStats" min="-999" max="99" name="over_resource" placeholder="자원">
+                            <input type="number" class="form-control overStats" min="-999" max="99" name="over_technology" placeholder="기술">
+                            <input type="number" class="form-control overStats" min="-999" max="99" name="over_risk" placeholder="위험">
+                        </div>
+                        <div class="input-group under">
+                            <input type="number" class="form-control underStats" min="1" max="999" name="under_fuel" placeholder="연료">
+                            <input type="number" class="form-control underStats" min="1" max="999" name="under_resource" placeholder="자원">
+                            <input type="number" class="form-control underStats" min="1" max="999" name="under_technology" placeholder="기술">
+                            <input type="number" class="form-control underStats" min="1" max="999" name="under_risk" placeholder="위험">
+                        </div>
+                        <div class="input-group hold">
+                            <input type="text" class="form-control" name="prerequisites">
+                            <button class="btn btn-outline-primary" type="button" onclick="addItem('')">Add</button>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-form-label">title</label>
+                        <input type="text" class="form-control" autocomplete="off" name="eventTitle" id="eventTitle" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-form-label">contents</label>
+                        <textarea class="form-control" name="eventContents" id="eventContents" required></textarea>
+                    </div>
+                    <div class="form-gorup">
+                        <label class="col-form-label">left & right text</label>
+                        <div class="input-group">
+                            <input type="text" class="form-control" autocomplete="off" name="choice_left" id="l_text" placeholder="l_text" required>
+                            <input type="text" class="form-control" autocomplete="off" name="choice_right" id="r_text" placeholder="r_text" required>
+                        </div>
+                    </div>
+                    <div class="form-gorup">
+                        <label class="col-form-label">left & right result</label>
+                        <div class="input-group">
+                            <div class="btn-group btn-group-toggle resultBtnGroup" data-toggle="buttons">
+                                <label class="btn btn-outline-primary active">
+                                    <input type="radio" name="results" id="left_result" value="left" checked> left
+                                </label>
+                                <label class="btn btn-outline-primary">
+                                    <input type="radio" name="results" id="right_result" value="right"> right
+                                </label>
+                            </div>
+                            <!-- 왼쪽 -->
+                            <div class="left-stats stats">
+                                <input type="number" class="form-control" min="-100" max="100" name="left_fuel" placeholder="연료">
+                                <input type="number" class="form-control" min="-100" max="100" name="left_resource" placeholder="자원">
+                                <input type="number" class="form-control" min="-100" max="100" name="left_technology" placeholder="기술">
+                                <input type="number" class="form-control" min="-100" max="100" name="left_risk" placeholder="위험">
+                            </div>
+                            <!-- 오른쪽 -->
+                            <div class="right-stats stats">
+                                <input type="number" class="form-control" min="-100" max="100" name="right_fuel" placeholder="연료">
+                                <input type="number" class="form-control" min="-100" max="100" name="right_resource" placeholder="자원">
+                                <input type="number" class="form-control" min="-100" max="100" name="right_technology" placeholder="기술">
+                                <input type="number" class="form-control" min="-100" max="100" name="right_risk" placeholder="위험">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-form-label">next_event</label>
+                        <div class="input-group">
+                            <div class="btn-group btn-group-toggle resultBtnGroup" data-toggle="buttons">
+                                <label class="btn btn-outline-primary active">
+                                    <input type="radio" name="next_event" id="left_event" value="left" checked> left
+                                </label>
+                                <label class="btn btn-outline-primary">
+                                    <input type="radio" name="next_event" id="right_event" value="right"> right
+                                </label>
+                            </div>
+                            <select class="form-control left-next" name="leftEvent" id="leftEvent" required>
+                                <option value="default">default</option>
+                                <% for (i of event) { %>
+                                    <% if(i.event_type == 'link') { %>
+                                        
+                                    <option value="<%= i._id %>"><%= i.event_code %> <%= i.title %></option>
+                                <% } }%>
+                            </select>
+                            <select class="form-control right-next" name="rightEvent" id="rightEvent" required>
+                                <option value="default">default</option>
+                                <% for (i of event) { if(i.event_type == 'link') { %>
+                                    <option value="<%= i._id %>"><%= i.event_code %> <%= i.title %></option>
+                                <% } } %>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                    <button type="submit" class="btn btn-warning" name="action" value="update" id="editBtn">Edit Event</button>
+                    <button type="submit" class="btn btn-primary" name="action" value="insert" id="saveBtn">Add Event</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>

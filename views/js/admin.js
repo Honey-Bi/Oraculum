@@ -8,9 +8,11 @@ $('#addUserForm').submit(function(){
         method:"POST",                                           
         url:"/account/register-confirm",
         data: {
-            name: inputName+'_t',
-            id: inputId+'_t',
+            name: inputName,
+            id: inputId,
             password: password,
+            idType: 'test'
+
         },
         dataType: "json",
         success: function(result){
@@ -136,11 +138,19 @@ $('#eventForm').submit(function() {
 });
 
 let currentId;
-$('.editEvent').click(function(){
+
+$('.edituser').click(function() {
+    
+});
+
+$('.edit').click(function() {
     actionType = "update";
     $('#editBtn').css('display', 'block');
     $('#saveBtn').css('display', 'none');
     currentId = $(this).val();
+});
+
+$('.editevent').click(function(){
     $.ajax({
         method: "get",
         url: "/admin/getEvent?id="+currentId,
@@ -203,7 +213,7 @@ $('.delete').click(function(){
         url: "/admin/deleteOne",
         data: {
             id : $(this).val(),
-            type: $(location).attr("href").split('/').pop()
+            type: new URLSearchParams(location.search).get('type')
         },
         dataType: "json",
         success: function (result) {

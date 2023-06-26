@@ -1,0 +1,28 @@
+<% var fieldName = keys.concat(addDefault); %>
+<div class="modal fade text-dark text-left" id="userModal" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Add User</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <form id="addUserForm" onsubmit="return false;">
+                <div class="modal-body">
+                    <% for(key in fieldName) { if(!notAddDefault.includes(fieldName[key])) {%>
+                    <div class="form-group">
+                        <label class="col-form-label"><%= fieldName[key] %></label>
+                        <input type="text" class="form-control" id="add_<%= fieldName[key] %>">
+                    </div>
+                    <% } } %>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                    <button type="submit" class="btn btn-warning" name="action" value="update" id="editBtn">Edit User</button>
+                    <button type="submit" class="btn btn-primary" id="saveBtn">Add User</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
