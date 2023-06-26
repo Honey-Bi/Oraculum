@@ -1,4 +1,4 @@
-const path = require ('path');
+const path = require('path');
 const express = require("express");
 const cookieParser = require('cookie-parser');
 const expressSession = require('express-session');
@@ -12,6 +12,7 @@ connectDB();
 app.set('view engine','ejs');
 app.set('views', path.join(__dirname, 'views'));
 
+app.use('/img', express.static(path.join(__dirname, '/views/img')));
 app.use('/css', express.static(path.join(__dirname, '/views/css')));
 app.use('/js', express.static(path.join(__dirname, '/views/js')));
 
@@ -39,7 +40,6 @@ app.get('/', async (req, res) => {
 
 app.all('*', (req,res) => {
   res.render('./404', {title: '404 Not', isLogin: userStatus.isLogin(req) });
-  // res.status(404).send('<h1>ERROR - 페이지를 찾을 수 없습니다.</h1>')
 })
 
 
