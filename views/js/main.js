@@ -7,6 +7,8 @@ $(window).resize(function() {
     selectItem.css('height', selectItem.css('width'));
 });
 
+$("#logout").attr("href", "/account/logout?callback=/")
+
 $(document).ready(function () {
     setView();
 });
