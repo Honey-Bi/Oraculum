@@ -4,7 +4,7 @@ const User = require('../models/User');
 const Main = require('../models/Main');
 const { default: mongoose } = require('mongoose');
 
-router.get('/', admin, async (req, res) => {
+router.get('/', admin, async (req, res) => { //관리 페이지 기본
     const id = req.decoded.user.id;
     try {
         const user = await User.findOne({ _id: id }) ;
@@ -18,59 +18,42 @@ router.get('/', admin, async (req, res) => {
     }
 });
 
-router.get('/users', admin, async (req, res) => {
+router.get('/management', admin, async (req, res) => { //관리페이지 
     const id = req.decoded.user.id;
     try {
         const user = await User.findOne({ _id: id }, {access:1}) ;
         if (user.access != 1) {
             return res.redirect('/404');
         }
-
-        // var data2 = await Main.Main.find().populate([
-        //     { path: 'userId' },
-        //     { path: 'nowEvent' }
-        // ]);
         
-        var data = await User.find({}, {}),
-            notAddDefault = ['created', 'tryCount','access'],
-            notView = ['_id', 'userId','nowEvent'],
+        var data = {};
+        var notView = [],
+            notAddDefault = [],
+            addDefault = [];
+        if (req.query.type == 'user') {
+            data = await User.find({}, {});
+            notAddDefault = ['created', 'tryCount','access', 'idType'];
+            notView = ['_id', 'userId','nowEvent', 'created'];
             addDefault = ['password'];
-            // userMain = await Main.Main.find({}, {});
+        } else if (req.query.type == 'event') {
+            data = await Main.MainEvent.find().sort({event_code:1});
+            notView = ['_id', 'contents', 'next_event', 'rewards', 'choices', 'prerequisites']
+        }
 
-        res.render('./admin/users', {
+        res.render('./admin/management', {
+            data: data, 
             notView: notView,
-            user: data, 
-            notAddDefault: notAddDefault, 
+            type: req.query.type,
+            notAddDefault: notAddDefault,
             addDefault: addDefault
         });
-        // userMain: userMain
 
     } catch (error) {   
         console.log(error)
     }
 });
 
-router.get('/events', admin, async (req, res) => {
-    const id = req.decoded.user.id;
-    try {
-        const user = await User.findOne({ _id: id }, {access:1}) ;
-        if (user.access != 1) {
-            return res.redirect('/404');
-        }
-        const data = await Main.MainEvent.find().sort({event_code:1});
-        let notView = ['_id', 'contents', 'next_event', 'rewards', 'choices', 'prerequisites']
-
-        res.render('./admin/events', {
-            event: data, 
-            notView: notView,
-        });
-
-    } catch (error) {   
-        console.log(error)
-    }
-});
-
-router.post('/deleteOne', admin, async (req, res) => {
+router.post('/deleteOne', admin, async (req, res) => { //유저 및 이벤트 삭제
     try {
         const userId = await User.findOne({ _id: req.decoded.user.id }, {access: 1}) ;
         let deleteId = {access: 0};
@@ -85,11 +68,11 @@ router.post('/deleteOne', admin, async (req, res) => {
             });
         }
 
-        if (req.body.type == 'users') {
+        if (req.body.type == 'user') {
             await User.deleteOne({_id: req.body.id})    ;
             await Main.Main.deleteOne({userId: req.body.id});
         } 
-        if(req.body.type == 'events') {
+        if(req.body.type == 'event') {
             const delEvent = await Main.MainEvent.findById(req.body.id);
             const renameCode = await Main.MainEvent.find({
                 event_type: delEvent.event_type,
@@ -119,7 +102,7 @@ router.post('/deleteOne', admin, async (req, res) => {
     
 });
 
-router.post('/actionEvent', admin, async (req, res) =>  {
+router.post('/actionEvent', admin, async (req, res) =>  { // 이벤트 변경 및 생성
     try {
         const userId = await User.findOne({ _id: req.decoded.user.id }, {access: 1}) ;
         if (userId.access != 1) {
@@ -200,7 +183,7 @@ router.post('/actionEvent', admin, async (req, res) =>  {
     }
 });
 
-router.get('/getEvent', async (req, res) => {
+router.get('/getData', async (req, res) => { // 이벤트 가져오는
     try {
         const events = await Main.MainEvent.findById(req.query.id);;
         return res.status(200).send(events);
@@ -212,47 +195,5 @@ router.get('/getEvent', async (req, res) => {
         });;
     }
 });
-
-// router.get('/addEvent', async (req, res) => {
-//     await new Main.MainEvent({
-//         event_type: 'random',
-//         event_code: 0,
-//         title: 'Test Event 1',
-//         contents: 'This is a test event 1.',
-//         prerequisites: {
-//             over: {
-//                 fuel: 0,
-//                 resource: 0,
-//                 technology: 0,
-//                 risk: 0
-//             },
-//             under: {
-//                 fuel: 100,
-//                 resource: 100,
-//                 technology: 100,
-//                 risk: 100
-//             },
-//             hold: []
-//         },
-//         choices: {
-//             left: 'Option 1',
-//             right: 'Option 2',
-//         },
-//         rewards: {
-//             left: {
-//                 fuel: 10,
-//                 resource: 0,
-//                 technology: 0,
-//                 risk: 0,
-//             },
-//             right: {
-//                 fuel: 0,
-//                 resource: 20,
-//                 technology: 0,
-//                 risk: 0,
-//             },
-//         },
-//     }).save();
-// });
 
 module.exports = router;
