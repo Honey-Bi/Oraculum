@@ -3,6 +3,4 @@ function isLogin(req) {
     return false;
 }
 
-
-
 module.exports.isLogin = isLogin;

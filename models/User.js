@@ -15,7 +15,7 @@ const UserSchema = new mongoose.Schema({
   password: {
     type: String,
     required: true,
-    select: false
+    select: false,
   },
   created : {
     type : Date,
@@ -29,6 +29,11 @@ const UserSchema = new mongoose.Schema({
     type: Number,
     default: 0
   },
+  idType: {
+    type: String,
+    enum: ['basic', 'naver', 'kakao', 'test'],
+    required: true
+  }
 }, {versionKey: false});
 
 // model을 export 해주기
