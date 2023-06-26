@@ -6,7 +6,6 @@ const User = require('../models/User');
 const Main = require('../models/Main'); 
 const jwt = require('jsonwebtoken');
 const config = require('../config/default.json');
-const { default: mongoose } = require('mongoose');
 
 const SECRET_KEY = config.jwtSecretKey;
 const client_id = config.naver.client_id;

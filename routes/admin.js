@@ -2,7 +2,6 @@ const router = require('express').Router();
 const { admin } = require('../middleware/adminValidation');
 const User = require('../models/User');
 const Main = require('../models/Main');
-const { default: mongoose } = require('mongoose');
 
 router.get('/', admin, async (req, res) => { //관리 페이지 기본
     const id = req.decoded.user.id;

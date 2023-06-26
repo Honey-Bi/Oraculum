@@ -13,7 +13,7 @@
                     <% for(key in fieldName) { if(!notAddDefault.includes(fieldName[key])) {%>
                     <div class="form-group">
                         <label class="col-form-label"><%= fieldName[key] %></label>
-                        <input type="text" class="form-control" id="add_<%= fieldName[key] %>">
+                        <input type="text" class="form-control" name="<%= fieldName[key] %>" id="add_<%= fieldName[key] %>">
                     </div>
                     <% } } %>
                 </div>

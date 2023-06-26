@@ -140,7 +140,17 @@ $('#eventForm').submit(function() {
 let currentId;
 
 $('.edituser').click(function() {
-    
+    $.ajax({
+        method: "get",
+        url: "/admin",
+        dataType: "json",
+        success: function(result) {
+            console.log(result);
+        },
+        error: function(result, status, error) {
+            console.log(error);
+        }
+    });
 });
 
 $('.edit').click(function() {
