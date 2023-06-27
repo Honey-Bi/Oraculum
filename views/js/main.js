@@ -56,25 +56,25 @@ let fuel_stock = 50,
 
 function setStatsView(fuel, resource, technology, risk) {
 
-    if (fuel_stock > 100-fuel) $('#fuel').animate({color: plusColor}, 300);
-    else if (fuel_stock < 100-fuel) $('#fuel').animate({color: minusColor}, 300);
+    if (fuel_stock > 100-fuel) $('#fuel').animate({color: plusColor}, 100);
+    else if (fuel_stock < 100-fuel) $('#fuel').animate({color: minusColor}, 100);
     $('#fuelFill').animate({height: 100-fuel + '%',}, 600 , 'easeOutQuart');
-    $('#fuel').animate({color: "#fff"}, 300);
+    $('#fuel').animate({color: "#fff"}, 500);
 
-    if (resource_stock > 100-resource) $('#resource').animate({color: plusColor}, 300)
-    else if (resource_stock < 100-resource) $('#resource').animate({color: minusColor}, 300)
+    if (resource_stock > 100-resource) $('#resource').animate({color: plusColor}, 100)
+    else if (resource_stock < 100-resource) $('#resource').animate({color: minusColor}, 100)
     $('#resourceFill').animate({height: 100-resource + '%'}, 600, 'easeOutQuart');
-    $('#resource').animate({color: "#fff"});
+    $('#resource').animate({color: "#fff"}, 500);
 
-    if (technology_stock > 100-technology) $('#technology').animate({color: plusColor}, 300)
-    else if (technology_stock < 100-technology) $('#technology').animate({color: minusColor}, 300)
+    if (technology_stock > 100-technology) $('#technology').animate({color: plusColor}, 100)
+    else if (technology_stock < 100-technology) $('#technology').animate({color: minusColor}, 100)
     $('#technologyFill').animate({height: 100-technology + '%'}, 600, 'easeOutQuart');
-    $('#technology').animate({color: "#fff"});
+    $('#technology').animate({color: "#fff"}, 500);
     
-    if (risk_stock > 100-risk) $('#risk').animate({color: plusColor}, 300)
-    else if (risk_stock < 100-risk) $('#risk').animate({color: minusColor}, 300)
+    if (risk_stock > 100-risk) $('#risk').animate({color: plusColor}, 100)
+    else if (risk_stock < 100-risk) $('#risk').animate({color: minusColor}, 100)
     $('#riskFill').animate({height: 100-risk + '%'}, 600, 'easeOutQuart');
-    $('#risk').animate({color: "#fff"});
+    $('#risk').animate({color: "#fff"}, 500);
     
     fuel_stock = 100 - fuel;
     resource_stock = 100 - resource;
