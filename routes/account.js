@@ -6,7 +6,6 @@ const User = require('../models/User');
 const Main = require('../models/Main'); 
 const jwt = require('jsonwebtoken');
 const config = require('../config/default.json');
-const fs = require('fs');
 
 const SECRET_KEY = config.jwtSecretKey;
 const client_id = config.naver.client_id;
@@ -25,10 +24,8 @@ router.get('/callback', function (req, res) {
     };
     request.get(options, function (error, response, body) {
         if (!error && response.statusCode == 200) {
-                // res.writeHead(200, {'Content-Type': 'text/json;charset=utf-8'});
-                // res.end(body);
-                req.session.naver = JSON.parse(body);
-                res.redirect('/account/member');
+            req.session.naver = JSON.parse(body);
+            res.redirect('/account/member');
         } else {
             res.status(response.statusCode).end();
             console.log('error = ' + response.statusCode);
@@ -49,8 +46,6 @@ router.get('/member', function (req, res) {
     };
     request.get(options, async function (error, response, body) {
         if (!error && response.statusCode == 200) {
-            // res.writeHead(200, {'Content-Type': 'text/json;charset=utf-8'});
-            // res.end(body);
             const naver_res =JSON.parse(body).response;
             
             const user = await User.findOne({email: naver_res.email});
@@ -78,7 +73,7 @@ router.get('/member', function (req, res) {
         } else {
             console.log('error');
             if(response != null) {
-                res.status(response.statusCode).end();
+                // res.status(response.statusCode).end();
                 console.log('error = ' + response.statusCode);
             }
             res.redirect('/account/login');
@@ -97,13 +92,6 @@ router.get('/login', async (req, res) => {
     });
 });
 
-router.get('/btnG_naver_icon_squre', (req, res) => {
-    fs.readFile('views/img/btnG_naver_icon_round.png', (error, data) => {
-        res.writeHead(200, {'Content-Type': 'text/html'})
-        res.end(data);
-    })
-});
-
 router.post("/login-confirm", async (req, res) => {
     const id = req.body.id, 
           pw = req.body.pw;
@@ -120,8 +108,6 @@ router.post("/login-confirm", async (req, res) => {
             });
         }
         console.log("id confirm");
-        // await User.findOne({email: id}, (err, user)=>{
-        // 요청된 이메일이 db에 있다면 비밀번호 일치여부 확인
 
         bcrypt.compare(pw, user.password, (error, result)=>{  // 기존 로그인 확인 코드
             if(result) console.log('로그인성공');
@@ -151,7 +137,7 @@ router.get('/register', (req, res) => {
     res.render('./account/register', { title: 'Sign Up', isLogin: userStatus.isLogin(req) });
 });
 
-router.post('/exist-confirm', async (req, res) => {
+router.post('/exist-confirm', async (req, res) => { //닉네임 또는 이메일이 존재하는 지 여부파악
     try {
         let input = req.body.input;
         var user;
@@ -222,7 +208,7 @@ router.post("/register-confirm", async (req, res) => {
 router.get('/logout', (req, res) => {
     var session = req.session;
     try {
-        if (session.token || session.naver) { //세션정보가 존재하는 경우
+        if (session.token) { //세션정보가 존재하는 경우
             req.session.destroy(function (err) {
                 if (err)
                     console.log(err);
