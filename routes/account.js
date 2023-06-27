@@ -6,6 +6,7 @@ const User = require('../models/User');
 const Main = require('../models/Main'); 
 const jwt = require('jsonwebtoken');
 const config = require('../config/default.json');
+const fs = require('fs');
 
 const SECRET_KEY = config.jwtSecretKey;
 const client_id = config.naver.client_id;
@@ -62,15 +63,11 @@ router.get('/member', function (req, res) {
                 });
                 newUser.save();
 
-                console.log(newUser._id);
-                const event = await Main.MainEvent.findOne({ 
-                    event_type: 'link',
-                    event_code: 0 // 시작 이벤트
-                }, {_id:1})._id;
+                const eventId = await Main.MainEvent.findOne({ event_type: 'link', event_code: 0 }); // 시작 이벤트
 
                 new Main.Main({
-                    userId: newUser._id,
-                    nowEvent: event,
+                    userId: newUser,
+                    nowEvent: eventId,
                 }).save();
                 setToken(req, newUser._id);
             } else {
@@ -100,11 +97,22 @@ router.get('/login', async (req, res) => {
     });
 });
 
+router.get('/btnG_naver_icon_squre', (req, res) => {
+    fs.readFile('views/img/btnG_naver_icon_round.png', (error, data) => {
+        res.writeHead(200, {'Content-Type': 'text/html'})
+        res.end(data);
+    })
+});
+
 router.post("/login-confirm", async (req, res) => {
     const id = req.body.id, 
           pw = req.body.pw;
     try {
-        let user = await User.findOne({email: id, idType: 'basic'}).select('+password');
+        let user = await User.findOne({email: id}).or([
+            {idType: 'basic'},
+            {idType: 'test'},
+        ])
+        .select('+password');
         if(!user){
             return res.status(401).json({
                 code: 401,
@@ -177,32 +185,31 @@ router.post("/register-confirm", async (req, res) => {
         // email-confirm 처리를 통해 먼저 확인하기에 주석처리함
               
         // user에 name, email, password 값 할당        
-        let user = new User({
+        let newUser = new User({
             name: name,
             email: email,
             password: password,
-            idType: (req.body.idType)?req.body.idType:'basic',
+            idType: (idType)?idType:'basic',
         });
   
         // password를 암호화 하기
         const salt = await bcrypt.genSalt(10);
-        user.password = await bcrypt.hash(password, salt);
+        newUser.password = await bcrypt.hash(password, salt);
   
-        await user.save(); // db에 user 저장
+        await newUser.save(); // db에 user 저장
 
-        let id = user._id;
-        let event = await Main.MainEvent.findOne({ 
+        let eventId = await Main.MainEvent.findOne({ 
             event_type: 'link',
             event_code: 0 // 시작 이벤트
-        })._id;
+        });
 
         new Main.Main({
-            userId: id,
-            nowEvent: event,
+            userId: newUser,
+            nowEvent: eventId,
         }).save();
 
         if (req.body.idType != 'test') {
-            setToken(req, user._id);
+            setToken(req, newUser._id);
         }
 
         res.send(true);
@@ -220,6 +227,7 @@ router.get('/logout', (req, res) => {
                 if (err)
                     console.log(err);
                 else {
+                    console.log('SignOut');
                     res.redirect(req.query.callback);
                 }
             })
@@ -253,7 +261,7 @@ function setToken(req, id) {
     token = jwt.sign(
         payload,                // token으로 변환할 데이터
         SECRET_KEY,             // secret key 값
-        { expiresIn: "1h", },// token의 유효시간을 1시간으로 설정
+        { expiresIn: "1h", },   // token의 유효시간을 1시간으로 설정
     );
     req.session.token = token;
 }
