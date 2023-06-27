@@ -1,6 +1,10 @@
-<% var fieldName = keys.concat(addDefault); %>
-<div class="modal fade text-dark text-left" id="userModal" tabindex="-1" role="dialog" aria-hidden="true">
-    <div class="modal-dialog" role="document">
+<% 
+
+
+var fieldName = keys.concat(addDefault); 
+%>
+<div class="modal fade text-dark text-left" id="userModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
                 <h5 class="modal-title">Add User</h5>
@@ -8,7 +12,7 @@
                     <span aria-hidden="true">&times;</span>
                 </button>
             </div>
-            <form id="addUserForm" onsubmit="return false;">
+            <form id="userForm" onsubmit="return false;">
                 <div class="modal-body">
                     <% for(key in fieldName) { if(!notAddDefault.includes(fieldName[key])) {%>
                     <div class="form-group">
@@ -19,8 +23,74 @@
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                    <button type="submit" class="btn btn-warning" name="action" value="update" id="editBtn">Edit User</button>
                     <button type="submit" class="btn btn-primary" id="saveBtn">Add User</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+<div class="modal fade text-dark text-left" id="editUserModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Update User</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <form id="updateUserForm" onsubmit="return false;">
+                <input type="hidden" name="id" id="id">
+                <input type="hidden" name="userId" id="userId">
+                <div class="modal-body">
+                    <div class="form-group">
+                        <label class="col-form-label">name</label>
+                        <input type="text" class="form-control" name="update_name" id="update_name" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-form-label">email</label>
+                        <input type="text" class="form-control" id="update_email" disabled>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-form-label">password</label>
+                        <div class="input-group">
+                            <input type="password" class="form-control" name="update_pw" placeholder="************" id="update_pw" disabled required>
+                            <div class="input-group-append">
+                                <button class="btn btn-danger" id="changePw" type="button">변경</button>
+                            </div>
+
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-form-label">nowEvent</label>
+                        <select name="update_nowEvent" id="update_nowEvent" class="form-control left-next" required>
+                            <% for (index in eventList) { %>
+                                <option value="<%= eventList[index]._id %>">
+                                    <%= 
+                                    eventList[index].event_type + " " + 
+                                    eventList[index].event_code + " " +
+                                    eventList[index].title 
+                                    %>
+                                </option>
+                            <% } %>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-form-label">stats</label>
+                        <div class="input-group">
+                            <input type="number" class="form-control" min="0" max="100" name="fuel" placeholder="연료" required>
+                            <input type="number" class="form-control" min="0" max="100" name="resource" placeholder="자원" required>
+                            <input type="number" class="form-control" min="0" max="100" name="technology" placeholder="기술" required>
+                            <input type="number" class="form-control" min="0" max="100" name="risk" placeholder="위험" required>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-form-label">created</label>
+                        <input type="datetime" class="form-control" id="update_date" disabled>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                    <button type="submit" class="btn btn-warning" name="action" value="update" id="editBtn">Edit User</button>
                 </div>
             </form>
         </div>

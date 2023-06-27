@@ -7,18 +7,16 @@
     <%
     var keys = [], count = 0;
     for (fieldName in data[0]._doc) {
-        if(!notView.includes(fieldName)) {
-            keys[count++] = fieldName;
-        }
+        keys[count++] = fieldName;
     } 
     %>
     <main>
         <%- include('./sidebar') %>
-        <%- include('./table', {keys: keys, type: type}) %>
+        <%- include('./table', {keys: keys, type: type, notView: notView}) %>
         
     </main>
     <% if(type == 'user') { %>
-        <%- include('./modal-user',{keys: keys, addDefault: addDefault}); %>
+        <%- include('./modal-user',{keys: keys, addDefault: addDefault, eventList: eventList}); %>
     <% } else if(type=='event') { %>
         <%- include('./modal-event', {event: data}); %>
     <% } %>

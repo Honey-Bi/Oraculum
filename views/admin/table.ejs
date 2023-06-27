@@ -1,7 +1,7 @@
 <div class="container">
     <div class="table-title">
-        <span>Event Data</span>
-        <button class="btn btn-primary addEvent" data-toggle="modal" data-target="#<%= type %>Modal">
+        <span><%= type %> Data</span>
+        <button class="btn btn-primary add_<%= type %>" data-toggle="modal" data-target="#<%= type %>Modal">
             <i class="fa-solid fa-plus"></i>
         </button>
     </div>
@@ -10,7 +10,7 @@
             <thead>
                 <tr>
                     <th scope="col">#</th>
-                    <% for (key of keys) { %>
+                    <% for (key of keys) { if(notView.includes(key)) continue; %>
                         <th scope="col"><%= key %></th>
                     <% } %>
                     <th scope="col">actions</th>   
@@ -20,13 +20,13 @@
                 <% for (i in data) { %>
                 <tr>
                     <th scope="row"><%= i %></th>  
-                    <% for (key of keys) { %>
+                    <% for (key of keys) { if(notView.includes(key)) continue; %>
                     <td nowrap>
                         <%= data[i][key] %>
                     </td>
                     <% } %>
                     <td nowrap>
-                        <button type="button" class="edit edit<%= type %> btn btn-warning" data-toggle="modal" data-target="#<%= type %>Modal" value="<%= data[i]._id %>">
+                        <button type="button" class="edit edit_<%= type %> btn btn-warning" data-toggle="modal" data-target="#<%= (type=='user')?'editUser':type %>Modal" value="<%= data[i]._id %>">
                             <i class="fa-sharp fa-solid fa-pen-to-square"></i>
                         </button>
                         <button type="button" class="delete btn btn-danger" value="<%= data[i]._id %>">

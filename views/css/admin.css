@@ -39,7 +39,7 @@ hr {
     margin-left: calc(198.42px + 32px + 1.5rem);
     z-index: 0;
 }
-.addEvent, .addUser {
+.add_event, .add_user {
     float: right;
 }
 .table-title > span {

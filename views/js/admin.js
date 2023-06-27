@@ -1,4 +1,4 @@
-$('#addUserForm').submit(function(){
+$('#userForm').submit(function(){
     let inputName = $('#add_name').val(),
         inputId = $('#add_email').val(),
         password = $('#add_password').val();
@@ -48,12 +48,13 @@ $('input[name=next_event]').change(function() {
 });
 
 let actionType;
-$('.addEvent').click(function() {
+$('.add_event').click(function() {
     if (actionType == "insert") {
         return;
     };
     
     actionType = "insert";
+    $('#id').val('')
     $('#eventCode').val('');
     $('#editBtn').css('display', 'none');
     $('#saveBtn').css('display', 'block');
@@ -87,6 +88,11 @@ $('.addEvent').click(function() {
     $('#rightEvent').val('default').prop('selected', true);
 });
 
+$('.add_user').click(function() {
+    $('#saveBtn').css('display', 'block');
+});
+
+
 jQuery.fn.serializeObject = function() {
     var obj = null;
     try {
@@ -114,16 +120,12 @@ jQuery.fn.serializeObject = function() {
 };
 
 $('#eventForm').submit(function() {
-    // console.log($(this).serializeObject());
-
     $.ajax({
         method:'POST',                                           
         url: '/admin/actionEvent',
         data: {
             formData: $(this).serializeObject(),
-            actionType: actionType,
-            id: currentId,
-            type: actionType
+            actionType: actionType
         },
         dataType: "json",
         success: function (result) {
@@ -137,15 +139,52 @@ $('#eventForm').submit(function() {
     });
 });
 
-let currentId;
+$('#updateUserForm').submit(function() {
+    console.log($(this).serializeObject());
 
-$('.edituser').click(function() {
+    $.ajax({
+        method:'POST',                                           
+        url: '/admin/updateUser',
+        data: {
+            formData: $(this).serializeObject(),
+        },
+        dataType: "json",
+        success: function (result) {
+            alert('code: ' + result.code + '\n' + result.message);
+            return location.reload();
+        },
+
+        error: function(result, status, error) {
+            return alert('code: ' + status+'\n' + error);
+        }
+    });
+});
+
+$('#changePw').click(function() {
+    if(confirm('정말 변경하시겠습니까?')) {
+        $('#update_pw').removeAttr('disabled');
+        $(this).attr('disabled', true);
+    }
+});
+
+$('.edit_user').click(function() {
+    $('#id').val($(this).val());
     $.ajax({
         method: "get",
-        url: "/admin",
+        url: "/admin/getData?type=user&id="+$(this).val(),
         dataType: "json",
         success: function(result) {
-            console.log(result);
+            $('#userId').val(result.userId._id);
+            $('#update_pw').attr('disabled', true);
+            $('#changePw').removeAttr('disabled')
+            $('#update_name').val(result.userId.name);
+            $('#update_email').val(result.userId.email);
+            $('input[name=fuel]').val(result.fuel);
+            $('input[name=resource]').val(result.resource);
+            $('input[name=technology]').val(result.technology);
+            $('input[name=risk]').val(result.risk);
+            $('#update_date').val(result.userId.created);
+            $('#update_nowEvent').val(result.nowEvent).prop('selected', true);
         },
         error: function(result, status, error) {
             console.log(error);
@@ -157,16 +196,16 @@ $('.edit').click(function() {
     actionType = "update";
     $('#editBtn').css('display', 'block');
     $('#saveBtn').css('display', 'none');
-    currentId = $(this).val();
 });
 
-$('.editevent').click(function(){
+$('.edit_event').click(function(){
+    $('#eventId').val($(this).val());
     $.ajax({
         method: "get",
-        url: "/admin/getEvent?id="+currentId,
+        url: "/admin/getData?type=event&id="+$(this).val(),
         dataType: "json",
         success: function(result) {
-            // console.log(result);
+            console.log(result);
             $('#eventType').attr('disabled', true);
             $('#eventCode').val(result.event_code);
             $('#eventType').val(result.event_type).prop("select", true);

@@ -2,6 +2,7 @@ const router = require('express').Router();
 const { admin } = require('../middleware/adminValidation');
 const User = require('../models/User');
 const Main = require('../models/Main');
+const bcrypt = require("bcryptjs");
 
 router.get('/', admin, async (req, res) => { //관리 페이지 기본
     const id = req.decoded.user.id;
@@ -17,10 +18,10 @@ router.get('/', admin, async (req, res) => { //관리 페이지 기본
     }
 });
 
-router.get('/management', admin, async (req, res) => { //관리페이지 
+router.get('/management', admin, async (req, res) => { //관리페이지 뷰 
     const id = req.decoded.user.id;
     try {
-        const user = await User.findOne({ _id: id }, {access:1}) ;
+        const user = await User.findById(id, {access:1}) ;
         if (user.access != 1) {
             return res.redirect('/404');
         }
@@ -29,11 +30,17 @@ router.get('/management', admin, async (req, res) => { //관리페이지
         var notView = [],
             notAddDefault = [],
             addDefault = [];
+            eventList = {};
         if (req.query.type == 'user') {
             data = await User.find({}, {});
-            notAddDefault = ['created', 'tryCount','access', 'idType'];
+            notAddDefault = ['_id', 'created', 'tryCount','access', 'idType'];
             notView = ['_id', 'userId','nowEvent', 'created'];
             addDefault = ['password'];
+            eventList = await Main.MainEvent.find({}, {
+                event_type:1,
+                event_code: 1,
+                title: 1
+            });
         } else if (req.query.type == 'event') {
             data = await Main.MainEvent.find().sort({event_code:1});
             notView = ['_id', 'contents', 'next_event', 'rewards', 'choices', 'prerequisites']
@@ -44,7 +51,8 @@ router.get('/management', admin, async (req, res) => { //관리페이지
             notView: notView,
             type: req.query.type,
             notAddDefault: notAddDefault,
-            addDefault: addDefault
+            addDefault: addDefault,
+            eventList: eventList
         });
 
     } catch (error) {   
@@ -54,10 +62,10 @@ router.get('/management', admin, async (req, res) => { //관리페이지
 
 router.post('/deleteOne', admin, async (req, res) => { //유저 및 이벤트 삭제
     try {
-        const userId = await User.findOne({ _id: req.decoded.user.id }, {access: 1}) ;
+        const userId = await User.findById(req.decoded.user.id, {access: 1}) ;
         let deleteId = {access: 0};
         if (req.body.type == 'users') {
-            deleteId = await User.findOne({ _id: req.body.id}, {access: 1});  
+            deleteId = await User.findById(req.body.id, {access: 1});  
         } 
 
         if (userId.access != 1 || deleteId.access == 1) {
@@ -83,7 +91,7 @@ router.post('/deleteOne', admin, async (req, res) => { //유저 및 이벤트 �
                 renameCode[i].event_code = renameCode[i].event_code -1
                 await rename.save();
             }
-            await Main.MainEvent.deleteOne({_id: req.body.id})
+            await Main.MainEvent.findByIdAndDelete(req.body.id)
         }
 
         return res.status(200).json({
@@ -113,7 +121,7 @@ router.post('/actionEvent', admin, async (req, res) =>  { // 이벤트 변경 �
         
         const formData = req.body.formData;
         
-        const eventCount = (req.body.type == 'update') ? formData.eventCode : await Main.MainEvent.find({event_type: formData.eventType}).count();
+        const eventCount = (req.body.actionType == 'update') ? formData.eventCode : await Main.MainEvent.find({event_type: formData.eventType}).count();
 
         let data = {
             event_type: formData.eventType,
@@ -160,10 +168,12 @@ router.post('/actionEvent', admin, async (req, res) =>  { // 이벤트 변경 �
             is_ending: (formData.eventType=='ending') ? true : false
         }
 
-        if(req.body.type == 'update') {
-            await Main.MainEvent.findOneAndUpdate({_id: req.body.id}, {$set: data});
+        if(req.body.actionType == 'update') {
+            await Main.MainEvent.findByIdAndUpdate(
+                formData, {$set: data
+            });
             console.log('event update accept');
-        } else if(req.body.type == 'insert') {
+        } else if(req.body.actionType == 'insert') {
             await new Main.MainEvent(data).save();
             console.log('event insert accept');
         }
@@ -182,16 +192,64 @@ router.post('/actionEvent', admin, async (req, res) =>  { // 이벤트 변경 �
     }
 });
 
-router.get('/getData', async (req, res) => { // 이벤트 가져오는
+router.post('/updateUser', admin, async (req, res) => {
     try {
-        const events = await Main.MainEvent.findById(req.query.id);;
-        return res.status(200).send(events);
+        const userId = await User.findOne({ _id: req.decoded.user.id }, {access: 1}) ;
+        if (userId.access != 1) {
+            return res.status(401).json({
+                code: 400,
+                message: '권한이 없습니다.',
+            });
+        }
+        const formData = req.body.formData;
+        const mainData = {
+            fuel: formData.fuel,
+            resource: formData.resource,
+            technology: formData.technology,
+            risk: formData.risk,
+            nowEvent: formData.update_nowEvent
+        };
+        let userData = {
+            name: formData.update_name,
+        };
+
+        if (formData.update_pw) {
+            const salt = await bcrypt.genSalt(10);
+            userData['password'] = await bcrypt.hash(formData.update_pw, salt);;
+        } 
+
+        await new Main.Main.findByIdAndUpdate(formData.id, {$set: {mainData}});
+        await new User.findByIdAndUpdate(formData.userId, {$set: {userData}});
+
+        return res.status(200).json({
+            code: 200,
+            message: '성공했습니다.',
+        });
     } catch (error) {
         console.log(error);
         return res.status(401).json({
             code: 401,
             message: '실패했습니다.',
-        });;
+        });
+    }
+});
+
+router.get('/getData', async (req, res) => { // 이벤트 가져오는
+    try {
+        let data = {};
+        if(req.query.type == 'user') {
+            data = await Main.Main.findOne({userId:req.query.id}).populate('userId');
+        } else if(req.query.type == 'event') {
+            data = await Main.MainEvent.findById(req.query.id);
+        }
+        
+        return res.status(200).send(data);
+    } catch (error) {
+        console.log(error);
+        return res.status(401).json({
+            code: 401,
+            message: '실패했습니다.',
+        });
     }
 });
 
