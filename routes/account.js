@@ -227,7 +227,7 @@ router.get('/logout', (req, res) => {
 router.get('/pw-forgot', (req, res) => {
     res.render('./account/forgotPw', {
         title: 'Forgot PassWord',
-        isLogin: false
+        isLogin: userStatus.isLogin(req)
     })
 });
 
