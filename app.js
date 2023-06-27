@@ -12,7 +12,6 @@ connectDB();
 app.set('view engine','ejs');
 app.set('views', path.join(__dirname, 'views'));
 
-app.use('/img', express.static(path.join(__dirname, '/views/img')));
 app.use('/css', express.static(path.join(__dirname, '/views/css')));
 app.use('/js', express.static(path.join(__dirname, '/views/js')));
 
@@ -28,11 +27,12 @@ app.use(expressSession({
 const admin = require('./routes/admin');
 const account = require('./routes/account');
 const main = require('./routes/main');
-// const { auth } = require('./middleware/userValidation');
+const image = require('./routes/image');
 
 app.use('/admin', admin);
 app.use('/account', account);
 app.use('/main', main);
+app.use('/image', image);
 
 app.get('/', async (req, res) => {
   res.render('',{ title: 'Oraculum', isLogin: userStatus.isLogin(req) });
