@@ -224,10 +224,6 @@ router.get('/logout', (req, res) => {
     }
 })
 
-router.get('/mypage', auth, (req, res) => {
-    res.render('./account/mypage', { title: 'My page', isLogin: userStatus.isLogin(req) });
-});
-
 router.get('/pw-forgot', (req, res) => {
     res.render('./account/forgotPw', {
         title: 'Forgot PassWord',
