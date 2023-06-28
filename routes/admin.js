@@ -42,7 +42,7 @@ router.get('/management', admin, async (req, res) => { //관리페이지 뷰
                 title: 1
             });
         } else if (req.query.type == 'event') {
-            data = await Main.MainEvent.find().sort({event_code:1});
+            data = await Main.MainEvent.find().sort({event_type: -1, event_code:1});
             notView = ['_id', 'contents', 'next_event', 'rewards', 'choices', 'prerequisites']
         }
 
@@ -165,15 +165,14 @@ router.post('/actionEvent', admin, async (req, res) =>  { // 이벤트 변경 �
                 left: (formData.leftEvent == 'default')? null : formData.leftEvent,
                 right: (formData.rightEvent == 'default')? null : formData.rightEvent
             },
-            is_ending: (formData.eventType=='ending') ? true : false
+            is_ending: (formData.is_ending=='true') ? true : false
         }
 
         if(req.body.actionType == 'update') {
-            await Main.MainEvent.findByIdAndUpdate(
-                formData, {$set: data
+            await Main.MainEvent.findByIdAndUpdate(formData.id, {$set: data
             });
             console.log('event update accept');
-        } else if(req.body.actionType == 'insert') {
+        } else {
             await new Main.MainEvent(data).save();
             console.log('event insert accept');
         }
@@ -240,6 +239,7 @@ router.get('/getData', async (req, res) => { // 이벤트 가져오는
         if(req.query.type == 'user') {
             data = await Main.Main.findOne({userId:req.query.id}).populate('userId');
         } else if(req.query.type == 'event') {
+
             data = await Main.MainEvent.findById(req.query.id);
         }
         
@@ -254,3 +254,6 @@ router.get('/getData', async (req, res) => { // 이벤트 가져오는
 });
 
 module.exports = router;
+
+// db.mains.updateOne({},{$set:{nowEvent:ObjectId("6495120e349f970d45344f5a")}})
+// 이벤트 삭제오류 대비
