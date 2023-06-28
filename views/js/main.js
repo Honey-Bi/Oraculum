@@ -82,6 +82,7 @@ function setStatsView(fuel, resource, technology, risk) {
 var minWidth = $(window).width() * 4 / 100; // 화면 크기의 4%
 var maxWidth = $(window).width() * 12 / 100; // 화면 크기의 12%
 
+var min2 =  minWidth/2;
 $('.selectBox').draggable({
     axis: "x", //좌우로만
     scroll: false,
@@ -89,32 +90,42 @@ $('.selectBox').draggable({
     drag : function(){
         var pos = $('.selectBox').position(); // 드래그 하는 이미지의 위치값 알아내기
 
-        $(this).css({'transform':'rotate('+(pos.left/40)+'deg)'})
-        console.log($(this).css('transform'));
+        $(this).css({'transform':'rotate('+((pos.left+min2)/40)+'deg)'})
+
+        // console.log($(this).css('transform'));
         $('.answer-left').css('opacity', (pos.left-minWidth)/maxWidth); 
         $('.answer-right').css('opacity', ((pos.left+minWidth)/maxWidth)*-1); 
     },
     stop : function(){ // 드래그 종료시 실행
         $('.answer').animate({opacity: 0}, 250);  
+        var pos = $('.selectBox').position(); 
         
         var select;
-
-        if (-maxWidth <= $(this).position().left && $(this).position().left <= maxWidth) {
-            // $(this).animate({transform:'rotate('+0+'deg)'});
-            // $(this).animate({ 
-            //     top : 0, left : 0,
-            // }, 250, 'easeOutBack');
+        if (-maxWidth <= pos.left && pos.left <= maxWidth) {
+            $(this).animate({ 
+                top : 0, left : 0,
+            }, 250, 'easeOutBack');
+            $(this).css({'transform': "rotate(0deg)"});
             return;
-        } else if ($(this).position().left >= maxWidth) { //왼쪽 선택
+        } else if (pos.left >= maxWidth) { //왼쪽 선택
             select = 1;
-        } else if($(this).position().left <= -maxWidth) { //오른쪽 선택
+        } else if(pos.left <= -maxWidth) { //오른쪽 선택
             select = 0;
         }
-        $(this).addClass('transformThis')
+        $(this).animate({
+            top: 100,
+            opacity: 0,
+        }, 250)
         setTimeout(() =>{
-            $(this).removeClass('transformThis');
-            $(this).css({ left : 0, 'transform': "rotate(0deg)"});
-        },400)
+            $(this).css({
+                left: 0,
+                'transform': "rotate(0deg)"
+            });
+            $(this).animate({
+                top: 0,
+                opacity: 1
+            }, 250, 'easeOutBack');
+        },250)
         // $(this).css({ top : 0, left : 0,}); // 원위치로, 제이쿼리UI 의 이징효과 사용
         
 
@@ -158,4 +169,3 @@ function calculateDeg(selector){
     var angle = Math.round(Math.atan2(b, a) * (180/Math.PI));
     return angle
 }
-
