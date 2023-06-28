@@ -43,8 +43,10 @@ function setSelectView(left, right) {
     $('#selectRight').text(right);
 }
 
-var plusColor = '#00C851';
-var minusColor = '#ff4444';
+let plusColor = '#00C851',
+    minusColor = '#ff4444',
+    minusFill = '#ff7f7f';
+
 
 let fuel_stock = 50,
     resource_stock = 50,
@@ -54,23 +56,35 @@ let fuel_stock = 50,
 function setStatsView(fuel, resource, technology, risk) {
 
     if (fuel_stock > 100-fuel) $('#fuel').animate({color: plusColor}, 100);
-    else if (fuel_stock < 100-fuel) $('#fuel').animate({color: minusColor}, 100);
-    $('#fuelFill').animate({height: 100-fuel + '%',}, 600 , 'easeOutQuart');
+    else if (fuel_stock < 100-fuel) {
+        $('#fuel').animate({color: minusColor}, 100);
+        $('#fuelFill').animate({color: minusFill}, 100);
+    }
+    $('#fuelFill').animate({color: '#7f7f7f', height: 100-fuel + '%',}, 600 , 'easeOutQuart');
     $('#fuel').animate({color: "#fff"}, 500);
 
     if (resource_stock > 100-resource) $('#resource').animate({color: plusColor}, 100)
-    else if (resource_stock < 100-resource) $('#resource').animate({color: minusColor}, 100)
-    $('#resourceFill').animate({height: 100-resource + '%'}, 600, 'easeOutQuart');
+    else if (resource_stock < 100-resource) {
+        $('#resource').animate({color: minusColor}, 100)
+        $('#resourceFill').animate({color: minusFill}, 100)
+    }
+    $('#resourceFill').animate({color: '#7f7f7f', height: 100-resource + '%'}, 600, 'easeOutQuart');
     $('#resource').animate({color: "#fff"}, 500);
 
     if (technology_stock > 100-technology) $('#technology').animate({color: plusColor}, 100)
-    else if (technology_stock < 100-technology) $('#technology').animate({color: minusColor}, 100)
-    $('#technologyFill').animate({height: 100-technology + '%'}, 600, 'easeOutQuart');
+    else if (technology_stock < 100-technology) {
+        $('#technology').animate({color: minusColor}, 100)
+        $('#technologyFill').animate({color: minusFill}, 100)
+    }
+    $('#technologyFill').animate({color: '#7f7f7f', height: 100-technology + '%'}, 600, 'easeOutQuart');
     $('#technology').animate({color: "#fff"}, 500);
     
     if (risk_stock > 100-risk) $('#risk').animate({color: plusColor}, 100)
-    else if (risk_stock < 100-risk) $('#risk').animate({color: minusColor}, 100)
-    $('#riskFill').animate({height: 100-risk + '%'}, 600, 'easeOutQuart');
+    else if (risk_stock < 100-risk) {
+        $('#risk').animate({color: minusColor}, 100)
+        $('#riskFill').animate({color: minusFill}, 100)
+    }
+    $('#riskFill').animate({color: '##7f7f7f', height: 100-risk + '%'}, 600, 'easeOutQuart');
     $('#risk').animate({color: "#fff"}, 500);
     
     fuel_stock = 100 - fuel;
@@ -112,7 +126,7 @@ $('.selectBox').draggable({
         } else if(pos.left <= -maxWidth) { //오른쪽 선택
             select = 0;
         }
-        
+
         $(this).animate({top: 100, opacity: 0}, 250);
         setTimeout(() =>{
             $(this).css({left: 0,'transform': "rotate(0deg)"});
@@ -120,47 +134,24 @@ $('.selectBox').draggable({
                 top: 0,
                 opacity: 1
             }, 250, 'easeOutBack');
-        },250)
-        // $(this).css({ top : 0, left : 0,}); // 원위치로, 제이쿼리UI 의 이징효과 사용
-        
+        },250);       
 
-        // $.ajax({
-        //     method:'POST',                                           
-        //     url:'/main/select',
-        //     async: true,
-        //     data: {
-        //         isLeft: select*1,
-        //     },
-        //     dataType: 'json',
-        //     success: function(result){
-        //         console.log(result);
-        //         setView();
-        //         return;
-        //     },
-        //     error: function(error) {
-        //         console.log(error)
-        //     }
-        // });
-
+        $.ajax({
+            method:'POST',                                           
+            url:'/main/select',
+            async: true,
+            data: {
+                isLeft: select*1,
+            },
+            dataType: 'json',
+            success: function(result){
+                console.log(result);
+                setView();
+                return;
+            },
+            error: function(error) {
+                console.log(error)
+            }
+        });
     }
 });
-
-function rotate(selector, angle, deg, ms){
-    $(selector).animate({a: deg},{
-        duration:ms,
-        step: function(now,fx) {
-            $(this).css({'transform':'rotate('+(angle+now)+'deg)'}); 
-        }
-    });
-}
-
-function calculateDeg(selector){
-    var tr = $(selector).css('transform');
-    var values = tr.split('(')[1].split(')')[0].split(',');
-    var a = values[0];
-    var b = values[1];
-    var scale = Math.sqrt(a*a + b*b);
-    var sin = b/scale;
-    var angle = Math.round(Math.atan2(b, a) * (180/Math.PI));
-    return angle
-}
