@@ -3,7 +3,6 @@ $('#userForm').submit(function(){
         inputId = $('#add_email').val(),
         password = $('#add_password').val();
 
-    console.log('submit')
     $.ajax({
         method:"POST",                                           
         url:"/account/register-confirm",
@@ -17,10 +16,12 @@ $('#userForm').submit(function(){
         dataType: "json",
         success: function(result){
             alert("정상적으로 추가되었습니다.");
-            location.reload();
         },
         error: function(result, status, error) {
             console.log(error)
+        },
+        complete : function() {
+            location.reload();
         }
     });
 });
@@ -120,27 +121,29 @@ jQuery.fn.serializeObject = function() {
 };
 
 $('#eventForm').submit(function() {
-    $.ajax({
-        method:'POST',                                           
-        url: '/admin/actionEvent',
-        data: {
-            formData: $(this).serializeObject(),
-            actionType: actionType
-        },
-        dataType: "json",
-        success: function (result) {
-            alert('code: ' + result.code + '\n' + result.message);
-            return location.reload();
-        },
-
-        error: function(result, status, error) {
-            return alert('code: ' + status+'\n' + error);
-        }
-    });
+    console.log($(this).serializeObject());
+    // $.ajax({
+    //     method:'POST',                                           
+    //     url: '/admin/actionEvent',
+    //     data: {
+    //         formData: $(this).serializeObject(),
+    //         actionType: actionType
+    //     },
+    //     dataType: "json",
+    //     success: function (result) {
+    //         alert('code: ' + result.code + '\n' + result.message);
+    //     },
+    //     error: function(result, status, error) {
+    //         return alert('code: ' + status+'\n' + error);
+    //     },
+    //     complete : function() {
+    //         location.reload();
+    //     }
+    // });
 });
 
 $('#updateUserForm').submit(function() {
-    console.log($(this).serializeObject());
+    // console.log($(this).serializeObject());
 
     $.ajax({
         method:'POST',                                           
@@ -151,11 +154,12 @@ $('#updateUserForm').submit(function() {
         dataType: "json",
         success: function (result) {
             alert('code: ' + result.code + '\n' + result.message);
-            return location.reload();
         },
-
         error: function(result, status, error) {
             return alert('code: ' + status+'\n' + error);
+        },
+        complete : function() {
+            location.reload();
         }
     });
 });
@@ -199,13 +203,91 @@ $('.edit').click(function() {
 });
 
 $('.edit_event').click(function(){
-    $('#eventId').val($(this).val());
+    setEventControl($(this).val());
+});
+
+$('.clone_event').click(function() {
+    if(!confirm('이벤트를 복제하시겠습니까?')) return;
+    setEventControl($(this).val());
+    actionType = "clone";
+    $('#eventType').removeAttr('disabled');
+    $('#eventForm').submit();
+});
+
+$('.delete').click(function(){
+    if(!confirm("정말 삭제 하시겠습니까?")){
+        return;
+    }
+    $.ajax({
+        method: "POST",
+        url: "/admin/deleteOne",    
+        data: {
+            id : $(this).val(),
+            type: new URLSearchParams(location.search).get('type')
+        },
+        dataType: "json",
+        success: function (result) {
+            // console.log(result);
+            alert('code: ' + result.code + '\n' + result.message);
+        },
+        error: function(result, status, error) {
+            console.log(error);
+            alert('code: ' + result.status+'\n' + result.responseJSON.message);
+        },
+        complete : function() {
+            location.reload();
+        }
+
+    });
+});
+
+$('#over, #under, #hold').click(function() {
+    let className = $(this).attr('id');
+    if ($(this).is(':checked')) {
+        $('.'+className).css('display', 'flex');
+    } else {
+        $('.'+className).css('display', 'none');
+    }
+});
+
+$('.menu-btn ').click(function() {
+    if($(this).hasClass('active')) {
+        $(this).removeClass('active').removeAttr('style');
+        $('.container').css({
+            'margin-left': 'calc(198.42px + 32px + 1.5rem)',
+            'max-width': 'calc(100% - 198.42px - 32px - 1.5rem)'
+        });
+        $('.menu').css('display', 'block').addClass('d-flex');
+        $('.b-example-divider').css({opacity: 1}, 250);
+    } else {
+        $(this).addClass('active').css('left', 0);
+        $('.container').css({
+            'margin-left': '1rem',
+            'max-width': '100%'
+        });
+        $('.menu').css('display', 'none').removeClass('d-flex');
+        $('.b-example-divider').css({opacity: 0}, 250);
+    }
+});
+
+$('#eventType').change(function() {
+    if($(this).val() == 'ending') {
+        $('#is_ending').val('true').prop('selected', true);
+    } else {
+        $('#is_ending').val('false').prop('selected', true);
+    }
+    isEnding($(this).val());
+});
+
+function setEventControl(id) {
+    $('#eventId').val(id);
     $.ajax({
         method: "get",
-        url: "/admin/getData?type=event&id="+$(this).val(),
+        url: "/admin/getData?type=event&id="+id,
         dataType: "json",
+        async : false,
         success: function(result) {
-            console.log(result);
+            // console.log(result);
             $('#eventType').attr('disabled', true);
             $('#eventCode').val(result.event_code);
             $('#eventType').val(result.event_type).prop("select", true);
@@ -246,68 +328,23 @@ $('.edit_event').click(function(){
             $('#rightEvent').val(
                 result.next_event.right ? result.next_event.right : 'default'
             ).prop('selected', true);
+
+            isEnding(result.event_type);
+            $('#is_ending').val(result.is_ending+'').prop('selected', true);
+            
         },
         error: function(result, status, error) {
             console.log(error);
         }
     });
-});
-
-$('.delete').click(function(){
-    if(!confirm("정말 삭제 하시겠습니까?")){
-        return;
-    }
-    $.ajax({
-        method: "POST",
-        url: "/admin/deleteOne",
-        data: {
-            id : $(this).val(),
-            type: new URLSearchParams(location.search).get('type')
-        },
-        dataType: "json",
-        success: function (result) {
-            // console.log(result);
-            alert('code: ' + result.code + '\n' + result.message);
-            location.reload();
-        },
-
-        error: function(result, status, error) {
-            console.log(error);
-            alert('code: ' + result.status+'\n' + result.responseJSON.message);
-        }
-    });
-});
-
-$('#over, #under, #hold').click(function() {
-    let className = $(this).attr('id');
-    if ($(this).is(':checked')) {
-        $('.'+className).css('display', 'flex');
+}
+function isEnding(type) {
+    if (type == 'link') {
+        $('#is_ending').removeAttr('disabled');
     } else {
-        $('.'+className).css('display', 'none');
+        $('#is_ending').attr('disabled', true);
     }
-});
-
-$('.menu-btn ').click(function() {
-    if($(this).hasClass('active')) {
-        $(this).removeClass('active').removeAttr('style');
-        $('.container').css({
-            'margin-left': 'calc(198.42px + 32px + 1.5rem)',
-            'max-width': 'calc(100% - 198.42px - 32px - 1.5rem)'
-        });
-        $('.menu').css('display', 'block').addClass('d-flex');
-        $('.b-example-divider').css({opacity: 1}, 250);
-    } else {
-        $(this).addClass('active').css('left', 0);
-        $('.container').css({
-            'margin-left': '1rem',
-            'max-width': '100%'
-        });
-        $('.menu').css('display', 'none').removeClass('d-flex');
-        $('.b-example-divider').css({opacity: 0}, 250);
-    }
-});
-
-
+}
 function addItem(text) {
     let content = '<div class="input-group hold" style="display:flex">';
         content += '<input type="text" name="prerequisites" id="" autocomplete="off" class="form-control prerequisites" value="'+ text +'">';
@@ -324,3 +361,5 @@ function deleteAllItem() {
         if(index > 0) $(item).remove();
     });
 }
+
+

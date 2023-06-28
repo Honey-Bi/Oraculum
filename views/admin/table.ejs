@@ -29,6 +29,11 @@
                         <button type="button" class="edit edit_<%= type %> btn btn-warning" data-toggle="modal" data-target="#<%= (type=='user')?'editUser':type %>Modal" value="<%= data[i]._id %>">
                             <i class="fa-sharp fa-solid fa-pen-to-square"></i>
                         </button>
+                        <% if (type == 'event') { %>
+                        <button type="button" class="clone clone_<%= type %> btn btn-warning" data-toggle="modal" value="<%= data[i]._id %>">
+                            <i class="fa-solid fa-clone"></i>
+                        </button>
+                        <% } %>
                         <button type="button" class="delete btn btn-danger" value="<%= data[i]._id %>">
                             <i class="fa-solid fa-trash"></i>
                         </button>
