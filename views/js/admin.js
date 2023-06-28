@@ -287,6 +287,27 @@ $('#over, #under, #hold').click(function() {
     }
 });
 
+$('.menu-btn ').click(function() {
+    if($(this).hasClass('active')) {
+        $(this).removeClass('active').removeAttr('style');
+        $('.container').css({
+            'margin-left': 'calc(198.42px + 32px + 1.5rem)',
+            'max-width': 'calc(100% - 198.42px - 32px - 1.5rem)'
+        });
+        $('.menu').css('display', 'block').addClass('d-flex');
+        $('.b-example-divider').css({opacity: 1}, 250);
+    } else {
+        $(this).addClass('active').css('left', 0);
+        $('.container').css({
+            'margin-left': '1rem',
+            'max-width': '100%'
+        });
+        $('.menu').css('display', 'none').removeClass('d-flex');
+        $('.b-example-divider').css({opacity: 0}, 250);
+    }
+});
+
+
 function addItem(text) {
     let content = '<div class="input-group hold" style="display:flex">';
         content += '<input type="text" name="prerequisites" id="" autocomplete="off" class="form-control prerequisites" value="'+ text +'">';

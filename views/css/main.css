@@ -16,7 +16,7 @@
     font-size: 1.1rem;
 }
 .contents {
-    font-size: 1.5rem;
+    font-size: 1.5em;
     font-weight: 500;
     line-height: 1.2;
     word-wrap: break-word;
@@ -60,4 +60,47 @@ i > i{
 }
 .col-3.fa-solid {
     -webkit-text-stroke: .5px #212529;
+}
+.noselect {
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    -khtml-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+}
+.top {
+    z-index: 999;
+}
+
+@media only screen and (min-width: 320px) {
+    .main {
+        font-size: 10px;
+    }
+    header {
+        margin-bottom: 0;
+    }
+}
+@media only screen and (min-width: 375px) {
+    .main {
+        font-size: 11px;
+    }
+}
+@media only screen and (min-width: 425px) {
+    .main {
+        font-size: 13px;
+    }
+}
+@media only screen and (min-width: 768px) {
+    .main {
+        font-size: 14px;
+    }
+}
+@media only screen and (min-width: 1024px) {
+    .main {
+        font-size: 16px;
+    }
+    header {
+        margin-bottom: 2rem;
+    }
 }

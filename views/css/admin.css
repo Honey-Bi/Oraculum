@@ -18,8 +18,13 @@ hr {
 }
 .sidebar {
     position: fixed;
-    display: flex;;
+    display: flex;
     z-index: 1;
+    padding: 0 !important;
+}
+.menu {
+    overflow: hidden;
+    margin: 1rem;
 }
 .b-example-divider {
     position: fixed;
@@ -37,6 +42,7 @@ hr {
     max-height: 100%;
     max-width: calc(100% - 198.42px - 32px - 1.5rem);
     margin-left: calc(198.42px + 32px + 1.5rem);
+    overflow: hidden;
     z-index: 0;
 }
 .add_event, .add_user {
@@ -68,4 +74,34 @@ input[type=number]::-webkit-outer-spin-button {
 .over, .under, .hold {
     margin-bottom: 0.5rem;
     display: none;
+}
+.menu-btn {
+    position: absolute;
+    display: flex;
+    width: 0.9rem;
+    height: 3rem;
+    font-size: 1.25rem;
+    top: 50%;
+    bottom: 50%;
+    cursor: pointer;
+    z-index: 2;
+    background-color: rgba(255, 255, 255, .5);
+    right: 0;
+    padding: 1rem 0;
+    padding-left: 0.25rem;
+    border-radius: 0.3rem 0 0 0.3rem;
+}
+.menu-btn.active {
+    padding-left: 0;
+    padding-right: 0.25rem;
+    border-radius: 0 0.3rem 0.3rem 0;
+}
+.menu-btn > i:last-child {
+    display: none;
+}
+.menu-btn.active > i:first-child {
+    display: none;
+}
+.menu-btn.active > i:last-child {
+    display: block;
 }

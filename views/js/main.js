@@ -112,15 +112,10 @@ $('.selectBox').draggable({
         } else if(pos.left <= -maxWidth) { //오른쪽 선택
             select = 0;
         }
-        $(this).animate({
-            top: 100,
-            opacity: 0,
-        }, 250)
+        
+        $(this).animate({top: 100, opacity: 0}, 250);
         setTimeout(() =>{
-            $(this).css({
-                left: 0,
-                'transform': "rotate(0deg)"
-            });
+            $(this).css({left: 0,'transform': "rotate(0deg)"});
             $(this).animate({
                 top: 0,
                 opacity: 1
