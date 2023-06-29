@@ -30,7 +30,7 @@ router.get('/management', admin, async (req, res) => { //관리페이지 뷰
             eventList = {};
 
         let select_type = req.query.select_type;
-        var regex = new RegExp("["+req.query.search_text+"]");
+        var regex = new RegExp("("+req.query.search_text+")");
 
         if (req.query.type == 'user') {         
             select_list = ['all', 'basic', 'naver', 'kakao', 'test']
@@ -39,6 +39,7 @@ router.get('/management', admin, async (req, res) => { //관리페이지 뷰
                     idType: select_type,
                     $or: [{name: regex}, {email: regex}]
                 }
+
                 if (select_type == 'all') delete query.idType
                 if (!req.query.search_text) delete query.$or;
 
@@ -137,7 +138,7 @@ router.post('/actionEvent', admin, async (req, res) =>  { // 이벤트 변경 �
     try {
         const userId = await User.findOne({ _id: req.decoded.user.id }, {access: 1}) ;
         if (userId.access != 1) {
-            return res.status(401).json({
+            return res.status(400).json({
                 code: 400,
                 message: '권한이 없습니다.',
             });
@@ -221,7 +222,7 @@ router.post('/updateUser', admin, async (req, res) => {
     try {
         const userId = await User.findOne({ _id: req.decoded.user.id }, {access: 1}) ;
         if (userId.access != 1) {
-            return res.status(401).json({
+            return res.status(400).json({
                 code: 400,
                 message: '권한이 없습니다.',
             });
@@ -259,8 +260,16 @@ router.post('/updateUser', admin, async (req, res) => {
     }
 });
 
-router.get('/getData', async (req, res) => { // 이벤트 가져오는
+router.get('/getData', admin, async (req, res) => { // 이벤트 가져오는
     try {
+        const userId = await User.findOne({ _id: req.decoded.user.id }, {access: 1}) ;
+        if (userId.access != 1) {
+            return res.status(401).json({
+                code: 401,
+                message: '권한이 없습니다.',
+            });
+        }
+
         let data = {};
         if(req.query.type == 'user') {
             data = await Main.Main.findOne({userId:req.query.id}).populate('userId');

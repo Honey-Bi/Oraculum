@@ -1,11 +1,15 @@
+let url_parameter = new URLSearchParams(location.search);
 $(document).ready(function () {
-    var parameter = new URLSearchParams(location.search);
     // console.log($('#select_type').val(type+'').prop('selected', true));
-    var select_type = parameter.get('select_type')
+    var select_type = url_parameter.get('select_type')
     if (select_type) {
         $('#select_type').val(select_type).prop('selected', true);
     }
-    $('#search_text').val(parameter.get('search_text'))
+    $('#search_text').val(url_parameter.get('search_text'))
+
+    if (url_parameter.get('side')) {
+        $('.menu-btn').click();
+    }
 });
 
 $('#userForm').submit(function(){
