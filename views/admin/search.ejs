@@ -1,0 +1,18 @@
+<form id="searchForm" onsubmit="return false;">
+    <div class="input-group">
+        <input type="hidden" name="type" value="<%= type %>">
+        <div class="input-group-prepend">
+            <select name="select_type" id="select_type" class="form-control">
+                <% for (i in select_list) { %>
+                    <option value="<%= select_list[i] %>"><%= select_list[i] %></option>
+                <% } %>
+            </select>
+        </div>
+        <input type="text" name="search_text" autocomplete="off" id="search_text" class="form-control">
+        <div class="input-group-append bg-white">
+            <button type="submit" class="btn btn-outline-success" id="searchBtn">
+                <i class="fa-solid fa-magnifying-glass"></i>
+            </button>
+        </div>
+    </div>
+</form>            

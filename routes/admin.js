@@ -26,13 +26,24 @@ router.get('/management', admin, async (req, res) => { //관리페이지 뷰
             return res.redirect('/404');
         }
         
-        var data = {};
-        var notView = [],
-            notAddDefault = [],
-            addDefault = [];
+        var data = notView = notAddDefault = addDefault = select_list = [],
             eventList = {};
-        if (req.query.type == 'user') {
-            data = await User.find({}, {});
+
+        let select_type = req.query.select_type;
+        var regex = new RegExp("["+req.query.search_text+"]");
+
+        if (req.query.type == 'user') {         
+            select_list = ['all', 'basic', 'naver', 'kakao', 'test']
+            if (select_type !== undefined) {
+                query = {
+                    idType: select_type,
+                    $or: [{name: regex}, {email: regex}]
+                }
+                if (select_type == 'all') delete query.idType
+                if (!req.query.search_text) delete query.$or;
+
+                data = await User.find(query);   
+            }
             notAddDefault = ['_id', 'created', 'tryCount','access', 'idType'];
             notView = ['_id', 'userId','nowEvent', 'created'];
             addDefault = ['password'];
@@ -42,14 +53,27 @@ router.get('/management', admin, async (req, res) => { //관리페이지 뷰
                 title: 1
             });
         } else if (req.query.type == 'event') {
-            data = await Main.MainEvent.find().sort({event_type: -1, event_code:1});
+            select_list = ['all','random', 'link', 'ending'];
+
+            if (select_type !== undefined) {
+                var query = {
+                    event_type: select_type,
+                    title: regex
+                }
+                if (select_type=='all') delete query.event_type;
+                if (!req.query.search_text) delete query.title;
+
+                data = await Main.MainEvent.find(query).sort({event_type: -1, event_code:1});
+            }
             notView = ['_id', 'contents', 'next_event', 'rewards', 'choices', 'prerequisites']
         }
 
         res.render('./admin/management', {
             data: data, 
             notView: notView,
+            select_list: select_list,
             type: req.query.type,
+            search: select_type,
             notAddDefault: notAddDefault,
             addDefault: addDefault,
             eventList: eventList
@@ -165,8 +189,10 @@ router.post('/actionEvent', admin, async (req, res) =>  { // 이벤트 변경 �
                 left: (formData.leftEvent == 'default')? null : formData.leftEvent,
                 right: (formData.rightEvent == 'default')? null : formData.rightEvent
             },
-            is_ending: (formData.is_ending=='true') ? true : false
+            is_ending: (req.body.is_ending == 'true') ? true : false
         }
+
+        console.log(req.body.is_ending);
 
         if(req.body.actionType == 'update') {
             await Main.MainEvent.findByIdAndUpdate(formData.id, {$set: data

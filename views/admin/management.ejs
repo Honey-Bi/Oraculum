@@ -6,21 +6,29 @@
 <body>
     <%
     var keys = [], count = 0;
-    for (fieldName in data[0]._doc) {
-        keys[count++] = fieldName;
-    } 
+    if(data.length != 0) { 
+        for (fieldName in data[0]._doc) {
+            keys[count++] = fieldName;
+        } 
+    }
     %>
     <main>
         <%- include('./sidebar') %>
-        <%- include('./table', {keys: keys, type: type, notView: notView}) %>
+        <div class="container">
+            <%- include('./search') %>
+            <% if (data.length != 0) { %>
+            <%- include('./table', {keys: keys, type: type, notView: notView}) %>
+            <% } %>
+        </div>
         
     </main>
+    <% if (data.length != 0) { %>
     <% if(type == 'user') { %>
         <%- include('./modal-user',{keys: keys, addDefault: addDefault, eventList: eventList}); %>
     <% } else if(type=='event') { %>
         <%- include('./modal-event', {event: data}); %>
     <% } %>
-
+    <% } %>
     <%- include('../script'); %>
     <script src="/js/admin.js"></script>
 </body>

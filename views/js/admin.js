@@ -1,3 +1,13 @@
+$(document).ready(function () {
+    var parameter = new URLSearchParams(location.search);
+    // console.log($('#select_type').val(type+'').prop('selected', true));
+    var select_type = parameter.get('select_type')
+    if (select_type) {
+        $('#select_type').val(select_type).prop('selected', true);
+    }
+    $('#search_text').val(parameter.get('search_text'))
+});
+
 $('#userForm').submit(function(){
     let inputName = $('#add_name').val(),
         inputId = $('#add_email').val(),
@@ -121,35 +131,35 @@ jQuery.fn.serializeObject = function() {
 };
 
 $('#eventForm').submit(function() {
-    console.log($(this).serializeObject());
-    // $.ajax({
-    //     method:'POST',                                           
-    //     url: '/admin/actionEvent',
-    //     data: {
-    //         formData: $(this).serializeObject(),
-    //         actionType: actionType
-    //     },
-    //     dataType: "json",
-    //     success: function (result) {
-    //         alert('code: ' + result.code + '\n' + result.message);
-    //     },
-    //     error: function(result, status, error) {
-    //         return alert('code: ' + status+'\n' + error);
-    //     },
-    //     complete : function() {
-    //         location.reload();
-    //     }
-    // });
+    // console.log($(this).serializeObject());
+    $.ajax({
+        method:'POST',                                           
+        url: '/admin/actionEvent',
+        data: {
+            formData: $(this).serializeObject(),
+            actionType: actionType,
+            is_ending: $('#is_ending').val()
+        },
+        dataType: "json",
+        success: function (result) {
+            alert('code: ' + result.code + '\n' + result.message);
+        },
+        error: function(result, status, error) {
+            return alert('code: ' + status+'\n' + error);
+        },
+        complete : function() {
+            location.reload();
+        }
+    });
 });
 
 $('#updateUserForm').submit(function() {
     // console.log($(this).serializeObject());
-
     $.ajax({
         method:'POST',                                           
         url: '/admin/updateUser',
         data: {
-            formData: $(this).serializeObject(),
+            formData: $(this).serializeObject()
         },
         dataType: "json",
         success: function (result) {
@@ -211,6 +221,7 @@ $('.clone_event').click(function() {
     setEventControl($(this).val());
     actionType = "clone";
     $('#eventType').removeAttr('disabled');
+    $('#is_ending').removeAttr('disabled');
     $('#eventForm').submit();
 });
 
@@ -262,7 +273,7 @@ $('.menu-btn ').click(function() {
     } else {
         $(this).addClass('active').css('left', 0);
         $('.container').css({
-            'margin-left': '1rem',
+            'margin-left': '0',
             'max-width': '100%'
         });
         $('.menu').css('display', 'none').removeClass('d-flex');
@@ -277,6 +288,11 @@ $('#eventType').change(function() {
         $('#is_ending').val('false').prop('selected', true);
     }
     isEnding($(this).val());
+});
+
+$('#searchForm').submit(function() {
+    type = new URLSearchParams(location.search).get('type')
+    location.href = location.pathname + '?' + $(this).serialize()
 });
 
 function setEventControl(id) {
@@ -328,6 +344,7 @@ function setEventControl(id) {
             $('#rightEvent').val(
                 result.next_event.right ? result.next_event.right : 'default'
             ).prop('selected', true);
+
 
             isEnding(result.event_type);
             $('#is_ending').val(result.is_ending+'').prop('selected', true);

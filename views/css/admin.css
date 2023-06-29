@@ -1,12 +1,14 @@
 main {
+
     display: flex;
     flex-wrap: nowrap;
     margin-left:  + 1.5rem;
     height: 100vh;
     height: -webkit-fill-available;
     max-height: 100vh;
-    overflow-x: auto;
-    overflow-y: hidden;
+    overflow: hidden;
+    /* overflow-x: auto;
+    overflow-y: hidden; */
 }
 hr {
     margin: 0.25rem 0;
@@ -39,6 +41,7 @@ hr {
     z-index: 1;
 }
 .container {
+    position: absolute;
     max-height: 100%;
     max-width: calc(100% - 198.42px - 32px - 1.5rem);
     margin-left: calc(198.42px + 32px + 1.5rem);
@@ -104,4 +107,15 @@ input[type=number]::-webkit-outer-spin-button {
 }
 .menu-btn.active > i:last-child {
     display: block;
+}
+#searchForm {
+    margin: 0 auto;
+    width: 30rem;
+}
+#select_type{
+    border-radius: 0.25rem 0 0 0.25rem;
+    min-width: 7rem;
+}
+.input-group-append {
+    border-radius: 0 0.25rem 0.25rem 0;
 }
