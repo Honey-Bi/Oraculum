@@ -4,6 +4,6 @@
     "naver": {
         "client_id": "SWZfFK0rmZ2YiDNmp4pz",
         "client_secret": "yh8jT_bWBy",
-        "redirectURI": "http://localhost:8080/account/callback"
+        "redirectURI": "http://192.168.30.191:8080/account/callback"
     }
 }

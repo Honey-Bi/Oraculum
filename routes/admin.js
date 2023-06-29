@@ -65,6 +65,7 @@ router.get('/management', admin, async (req, res) => { //관리페이지 뷰
                 if (!req.query.search_text) delete query.title;
 
                 data = await Main.MainEvent.find(query).sort({event_type: -1, event_code:1});
+                eventList = await Main.MainEvent.find({event_type: 'link'});
             }
             notView = ['_id', 'contents', 'next_event', 'rewards', 'choices', 'prerequisites']
         }
@@ -193,11 +194,8 @@ router.post('/actionEvent', admin, async (req, res) =>  { // 이벤트 변경 �
             is_ending: (req.body.is_ending == 'true') ? true : false
         }
 
-        console.log(req.body.is_ending);
-
         if(req.body.actionType == 'update') {
-            await Main.MainEvent.findByIdAndUpdate(formData.id, {$set: data
-            });
+            await Main.MainEvent.findByIdAndUpdate(formData.id, {$set: data});
             console.log('event update accept');
         } else {
             await new Main.MainEvent(data).save();
@@ -274,7 +272,6 @@ router.get('/getData', admin, async (req, res) => { // 이벤트 가져오는
         if(req.query.type == 'user') {
             data = await Main.Main.findOne({userId:req.query.id}).populate('userId');
         } else if(req.query.type == 'event') {
-
             data = await Main.MainEvent.findById(req.query.id);
         }
         

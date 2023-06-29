@@ -28,13 +28,18 @@ router.post('/select', auth, async (req, res) =>{
             technology: main.technology + rewards.technology,
             risk: main.risk + rewards.risk,
         }
-
-        if (isOver(stats) && !main.nowEvent.is_ending) { // 게임오버인지 확인
+        if (main.nowEvent.nextEvent == "6495120e349f970d45344f5a") {
+            stats.fuel = 0;
+            stats.resource = 0;
+            stats.technology = 0;
+            stats.risk = 0;
+        } else if (isOver(stats) && !main.nowEvent.is_ending) { // 게임오버인지 확인
             nextEvent = await Main.MainEvent.find(
                 getQuery('ending', stats)
             );
+
             nextEvent = nextEvent[getRandom(nextEvent.length)];
-            
+
             stats.fuel = 0;
             stats.resource = 0;
             stats.technology = 0;

@@ -307,7 +307,7 @@ function setEventControl(id) {
         dataType: "json",
         async : false,
         success: function(result) {
-            // console.log(result);
+            console.log(result);
             $('#eventType').attr('disabled', true);
             $('#eventCode').val(result.event_code);
             $('#eventType').val(result.event_type).prop("select", true);
