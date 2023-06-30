@@ -2,7 +2,27 @@ const router = require('express').Router();
 const { admin } = require('../middleware/adminValidation');
 const User = require('../models/User');
 const Main = require('../models/Main');
+const Card = require('../models/Card');
 const bcrypt = require("bcryptjs");
+const fs = require('fs');
+
+const multer = require('multer');
+const storage = multer.diskStorage({
+    destination(req, file, callback) {
+        callback(null, 'views/img');
+    },
+    filename(req, file, callback) {
+        let array = file.originalname.split('.');
+        array[0] = array[0] + '_';
+        array[1] = '.' + array[1];
+        array.splice(1, 0, Date.now().toString());
+        const result = array.join('');
+        console.log(result);
+        callback(null, result);
+    }
+});
+const upload = multer({storage});
+
 
 router.get('/', admin, async (req, res) => { //관리 페이지 기본
     const id = req.decoded.user.id;
@@ -31,43 +51,61 @@ router.get('/management', admin, async (req, res) => { //관리페이지 뷰
 
         let select_type = req.query.select_type;
         var regex = new RegExp("("+req.query.search_text+")");
+        switch (req.query.type) {
+            case 'user': // user 정보
+                select_list = ['all', 'basic', 'naver', 'kakao', 'test']
+                notAddDefault = ['_id', 'created', 'tryCount','access', 'idType'];
+                notView = ['_id', 'userId','nowEvent', 'created'];
+                addDefault = ['password'];
 
-        if (req.query.type == 'user') {         
-            select_list = ['all', 'basic', 'naver', 'kakao', 'test']
-            if (select_type !== undefined) {
-                query = {
-                    idType: select_type,
-                    $or: [{name: regex}, {email: regex}]
+                if (select_type !== undefined) {
+                    query = {
+                        idType: select_type,
+                        $or: [{name: regex}, {email: regex}]
+                    }
+
+                    if (select_type == 'all') delete query.idType
+                    if (!req.query.search_text) delete query.$or;
+
+                    data = await User.find(query);   
                 }
+                eventList = await Main.MainEvent.find({}, {
+                    event_type:1,
+                    event_code: 1,
+                    title: 1
+                });
+                break;
+            case 'event': // event 정보
+                select_list = ['all', 'random', 'link', 'ending'];
+                notView = ['_id', 'contents', 'next_event', 'rewards', 'choices', 'prerequisites']
 
-                if (select_type == 'all') delete query.idType
-                if (!req.query.search_text) delete query.$or;
-
-                data = await User.find(query);   
-            }
-            notAddDefault = ['_id', 'created', 'tryCount','access', 'idType'];
-            notView = ['_id', 'userId','nowEvent', 'created'];
-            addDefault = ['password'];
-            eventList = await Main.MainEvent.find({}, {
-                event_type:1,
-                event_code: 1,
-                title: 1
-            });
-        } else if (req.query.type == 'event') {
-            select_list = ['all','random', 'link', 'ending'];
-
-            if (select_type !== undefined) {
-                var query = {
-                    event_type: select_type,
-                    title: regex
+                if (select_type !== undefined) {
+                    var query = {
+                        event_type: select_type,
+                        title: regex
+                    }
+                    if (select_type=='all') delete query.event_type;
+                    if (!req.query.search_text) delete query.title;
+    
+                    data = await Main.MainEvent.find(query).sort({event_type: -1, event_code:1});
                 }
-                if (select_type=='all') delete query.event_type;
-                if (!req.query.search_text) delete query.title;
-
-                data = await Main.MainEvent.find(query).sort({event_type: -1, event_code:1});
                 eventList = await Main.MainEvent.find({event_type: 'link'});
-            }
-            notView = ['_id', 'contents', 'next_event', 'rewards', 'choices', 'prerequisites']
+                break;
+            case 'card':
+                select_list = ['all', 'ending', 'npc'];
+                notView = ['_id']
+                if (select_type !== undefined) {
+                    var query = {
+                        type: select_type,
+                        $or: [{name: regex}, {file: regex}]
+                    }
+                    if (select_type=='all') delete query.type;
+                    if (!req.query.search_text) delete query.$or;
+                
+                    data = await Card.find(query);
+                    console.log(data);
+                }
+                break;
         }
 
         res.render('./admin/management', {
@@ -133,6 +171,48 @@ router.post('/deleteOne', admin, async (req, res) => { //유저 및 이벤트 �
         });;
     }
     
+});
+
+router.post('/updateUser', admin, async (req, res) => {
+    try {
+        const userId = await User.findOne({ _id: req.decoded.user.id }, {access: 1}) ;
+        if (userId.access != 1) {
+            return res.status(400).json({
+                code: 400,
+                message: '권한이 없습니다.',
+            });
+        }
+        const formData = req.body.formData;
+        const mainData = {
+            fuel: formData.fuel,
+            resource: formData.resource,
+            technology: formData.technology,
+            risk: formData.risk,
+            nowEvent: formData.update_nowEvent
+        };
+        let userData = {
+            name: formData.update_name,
+        };
+
+        if (formData.update_pw) {
+            const salt = await bcrypt.genSalt(10);
+            userData['password'] = await bcrypt.hash(formData.update_pw, salt);;
+        } 
+
+        await new Main.Main.findByIdAndUpdate(formData.id, {$set: {mainData}});
+        await new User.findByIdAndUpdate(formData.userId, {$set: {userData}});
+
+        return res.status(200).json({
+            code: 200,
+            message: '성공했습니다.',
+        });
+    } catch (error) {
+        console.log(error);
+        return res.status(401).json({
+            code: 401,
+            message: '실패했습니다.',
+        });
+    }
 });
 
 router.post('/actionEvent', admin, async (req, res) =>  { // 이벤트 변경 및 생성
@@ -216,39 +296,38 @@ router.post('/actionEvent', admin, async (req, res) =>  { // 이벤트 변경 �
     }
 });
 
-router.post('/updateUser', admin, async (req, res) => {
+router.post('/actionCard', admin, upload.single('image'), async (req, res) => {
     try {
         const userId = await User.findOne({ _id: req.decoded.user.id }, {access: 1}) ;
         if (userId.access != 1) {
-            return res.status(400).json({
-                code: 400,
+            return res.status(401).json({
+                code: 401,
                 message: '권한이 없습니다.',
             });
         }
-        const formData = req.body.formData;
-        const mainData = {
-            fuel: formData.fuel,
-            resource: formData.resource,
-            technology: formData.technology,
-            risk: formData.risk,
-            nowEvent: formData.update_nowEvent
-        };
-        let userData = {
-            name: formData.update_name,
-        };
+        const formData = req.body;
+        if (formData.actionType == 'insert') {
+            new Card({
+                type: formData.type,
+                name: formData.name,
+                file: req.file.filename
+            }).save();
+        } else if (req.body.actionType == 'update') {
+            const card = await Card.findById(formData.id);
+            card.file
+            let file_name = req.file.filename;
+            if (fs.existsSync("view/img" + file_name)) {
+                // 파일이 존재한다면 true 그렇지 않은 경우 false 반환
+                try {
+                    fs.unlinkSync("view/img" + file_name);
+                    console.log("image delete");
+                } catch (error) {
+                    console.log(error);
+                }
+            }
+        }
+        res.redirect(req.headers.referer);
 
-        if (formData.update_pw) {
-            const salt = await bcrypt.genSalt(10);
-            userData['password'] = await bcrypt.hash(formData.update_pw, salt);;
-        } 
-
-        await new Main.Main.findByIdAndUpdate(formData.id, {$set: {mainData}});
-        await new User.findByIdAndUpdate(formData.userId, {$set: {userData}});
-
-        return res.status(200).json({
-            code: 200,
-            message: '성공했습니다.',
-        });
     } catch (error) {
         console.log(error);
         return res.status(401).json({
