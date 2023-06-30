@@ -53,6 +53,11 @@ const EventSchema = new mongoose.Schema({
     },
     title: String,
     contents: String,
+    view: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'card',
+        require: true
+    },
     prerequisites: {
         over: {
             fuel: {
