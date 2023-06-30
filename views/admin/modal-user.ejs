@@ -1,6 +1,4 @@
 <% 
-
-
 var fieldName = keys.concat(addDefault); 
 %>
 <div class="modal fade text-dark text-left" id="userModal" tabindex="-1" aria-hidden="true">
@@ -14,12 +12,18 @@ var fieldName = keys.concat(addDefault);
             </div>
             <form id="userForm" onsubmit="return false;">
                 <div class="modal-body">
-                    <% for(key in fieldName) { if(!notAddDefault.includes(fieldName[key])) {%>
                     <div class="form-group">
-                        <label class="col-form-label"><%= fieldName[key] %></label>
-                        <input type="text" class="form-control" name="<%= fieldName[key] %>" id="add_<%= fieldName[key] %>">
+                        <label class="col-form-label">name</label>
+                        <input type="text" class="form-control" name="name" id="add_name">
                     </div>
-                    <% } } %>
+                    <div class="form-group">
+                        <label class="col-form-label">email</label>
+                        <input type="text" class="form-control" name="email" id="add_email">
+                    </div>
+                    <div class="form-group">
+                        <label class="col-form-label">password</label>
+                        <input type="text" class="form-control" name="password" id="add_password">
+                    </div>
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>

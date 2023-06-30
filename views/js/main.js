@@ -8,7 +8,41 @@ $("#logout").attr("href", "/account/logout?callback=/")
 
 $(document).ready(function () {
     setView();
+    for (let i = 0; i < 15; i++) {
+        const newStar = new star();
+        newStar.set();
+    }
 });
+
+class star {
+    constructor(x, y, size, time, asd) {
+      this.x = x;
+      this.y = y;
+      this.size = size;
+      this.time = time;
+      this.asd = asd
+    }
+  
+    set() {
+        this.x = Math.random() * window.innerWidth;
+        this.y = Math.random() * window.innerHeight;
+        this.size = Math.random() * 4;
+        this.time = Math.random() * 30;
+    
+        const background = $(".stars");
+        const starDiv = document.createElement("div");
+        starDiv.className = "star";
+
+        starDiv.style.left = this.x + "px";
+        starDiv.style.top = this.y + "px";
+        starDiv.style.width = this.size + "px";
+        starDiv.style.height = this.size + "px";
+        starDiv.style.animation = `blink ${this.time}s steps(10) infinite`;
+    
+        background.append(starDiv);
+    }
+}
+
 
 function setView() {
     $.ajax({
@@ -151,6 +185,9 @@ $('.selectBox').draggable({
             },
             error: function(error) {
                 console.log(error)
+            },
+            complete: function() {
+
             }
         });
     }

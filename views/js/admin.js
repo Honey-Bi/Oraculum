@@ -12,6 +12,11 @@ $(document).ready(function () {
     }
 });
 
+$("#file").on('change',function(){
+    var fileName = $("#file").val();
+    $(".upload-name").val(fileName);
+  });
+
 $('#userForm').submit(function(){
     let inputName = $('#add_name').val(),
         inputId = $('#add_email').val(),
@@ -106,7 +111,12 @@ $('.add_event').click(function() {
 $('.add_user').click(function() {
     $('#saveBtn').css('display', 'block');
 });
-
+$('.add_card').click(function() {
+    $('#cardActionType').val('insert');
+})
+$('.edit_card').click(function() {
+    $('#card_id').val($(this).val());
+})
 
 jQuery.fn.serializeObject = function() {
     var obj = null;
@@ -212,6 +222,7 @@ $('.edit_user').click(function() {
 
 $('.edit').click(function() {
     actionType = "update";
+    $('#cardActionType').val('update');
     $('#editBtn').css('display', 'block');
     $('#saveBtn').css('display', 'none');
 });

@@ -15,20 +15,30 @@
     <main>
         <%- include('./sidebar') %>
         <div class="container">
+            <div class="table-title mb-4">
+                <span><%= type %> Data</span>
+                <button class="btn btn-primary float-right add_<%= type %>" data-toggle="modal" data-target="#<%= type %>Modal">
+                    <i class="fa-solid fa-plus"></i>
+                </button>
+            </div>
             <%- include('./search') %>
             <% if (data.length != 0) { %>
             <%- include('./table', {keys: keys, type: type, notView: notView}) %>
             <% } %>
         </div>
-        
     </main>
-    <% if (data.length != 0) { %>
-    <% if(type == 'user') { %>
-        <%- include('./modal-user',{keys: keys, addDefault: addDefault, eventList: eventList}); %>
-    <% } else if(type=='event') { %>
-        <%- include('./modal-event', {event: eventList}); %>
-    <% } %>
-    <% } %>
+    <% switch (type) {
+        case 'user': %>
+            <%- include('./modal-user',{keys: keys, addDefault: addDefault, eventList: eventList}); %>
+            <% break;
+        case 'event': %>
+        
+            <%- include('./modal-event', {event: eventList}); %>
+            <% break;
+        case 'card': %>
+            <%- include('./modal-card', {event: eventList}); %>
+            <% break;
+    } %>
     <%- include('../script'); %>
     <script src="/js/admin.js"></script>
 </body>

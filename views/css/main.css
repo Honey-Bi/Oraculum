@@ -5,6 +5,7 @@
 .slider {
     padding: 0;
 }
+
 .answer {
     position: absolute;
     width: calc(45% - 30px);
@@ -89,6 +90,7 @@ i > i{
     .main {
         font-size: 11px;
     }
+    
 }
 @media only screen and (min-width: 425px) {
     .main {
@@ -108,3 +110,20 @@ i > i{
         margin-bottom: 2rem;
     }
 }
+.star {
+    position: absolute;
+    background-color: #fff;
+    filter: blur(5px);
+}
+@keyframes blink {
+    10% { opacity: 0.8; }
+    20% { opacity: 0.6; }
+    30% { opacity: 0.4; }
+    40% { opacity: 0.2; }
+    50% { opacity: 0.0; }
+    60% { opacity: 0.2; }
+    70% { opacity: 0.4; }
+    80% { opacity: 0.6; }
+    90% { opacity: 0.8; }
+    100% { opacity: 1; }
+  }

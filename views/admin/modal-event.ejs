@@ -56,6 +56,12 @@
                         <label class="col-form-label">contents</label>
                         <textarea class="form-control" name="eventContents" id="eventContents" required></textarea>
                     </div>
+                    <div class="form-group">
+                        <label class="col-form-label">card</label>
+                        <select name="eventCard" id="eventCard">
+                            
+                        </select>
+                    </div>
                     <div class="form-gorup">
                         <label class="col-form-label">left & right text</label>
                         <div class="input-group">
@@ -103,7 +109,7 @@
                             </div>
                             <select class="form-control left-next" name="leftEvent" id="leftEvent" required>
                                 <option value="default">default</option>
-                                <% for (i of event) { %>
+                                <% for (i of eventList) { %>
                                     <% if(i.event_type == 'link') { %>
                                         
                                     <option value="<%= i._id %>"><%= i.event_code %> <%= i.title %></option>
@@ -111,7 +117,7 @@
                             </select>
                             <select class="form-control right-next" name="rightEvent" id="rightEvent" required>
                                 <option value="default">default</option>
-                                <% for (i of event) { if(i.event_type == 'link') { %>
+                                <% for (i of eventList) { if(i.event_type == 'link') { %>
                                     <option value="<%= i._id %>"><%= i.event_code %> <%= i.title %></option>
                                 <% } } %>
                             </select>
