@@ -12,10 +12,22 @@ $(document).ready(function () {
     }
 });
 
-$("#file").on('change',function(){
+$("#file").on('change',function(event){
     var fileName = $("#file").val();
     $(".upload-name").val(fileName);
-  });
+
+    var file = event.target.files[0];
+
+    var reader = new FileReader(); 
+    reader.onload = function(e) {
+        $("#cardImage").css('display', 'block');
+        $("#cardImage").attr("src", e.target.result);
+    }
+
+    reader.readAsDataURL(file);
+    // $('#cardImage').attr('')
+
+});
 
 $('#userForm').submit(function(){
     let inputName = $('#add_name').val(),
@@ -108,17 +120,45 @@ $('.add_event').click(function() {
     $('#rightEvent').val('default').prop('selected', true);
 });
 
-$('.add_user').click(function() {
+$('.add_user, .add_card').click(function() {
     $('#saveBtn').css('display', 'block');
+    $('#editBtn').css('display', 'none');
 });
 $('.add_card').click(function() {
+    $('#cardImage').css('display', 'none');
     $('#cardActionType').val('insert');
 })
 $('.edit_card').click(function() {
+    $('#saveBtn').css('display', 'none');
+    $('#editBtn').css('display', 'block');
+    $('#cardImage').css('display', 'block');
     $('#card_id').val($(this).val());
-})
+    $.ajax({
+        method: "get",
+        url: "/admin/getData?type=card&id="+$(this).val(),
+        dataType: "json",
+        success: function(result) {
+            console.log(result);
+            $('#cardImage').attr('src', '/image/'+result.file)
+            $('#cardType').val(result.type).prop('selected', true);
+            $('#cardName').val(result.name);
+        },
+        error: function(result, status, error) {
+            console.log(error);
+        }
+    });
+});
 
-jQuery.fn.serializeObject = function() {
+$('#editBtn, #saveBtn').click(function() {
+    if ($('#file').val()) {
+        $('#cardForm').attr('enctype', 'multipart/form-data');
+    } else {
+        $('#cardForm').removeAttr('enctype');
+    }
+    $('#cardForm').submit();
+});
+
+jQuery.fn.serializeObject = function() {    
     var obj = null;
     try {
         if (this[0].tagName && this[0].tagName.toUpperCase() == "FORM") {
@@ -310,6 +350,19 @@ $('#searchForm').submit(function() {
     location.href = location.pathname + '?' + $(this).serialize()
 });
 
+$('#eventCard').change(function(){
+
+    $.ajax({
+        method: 'get',
+        url: "/admin/getData?type=card&id="+$(this).val(),
+        dataType: "json",
+        success: function (result) {
+            $('#eventImage').attr('str', '/image/'+result.file);
+        }
+    });
+
+});
+
 function setEventControl(id) {
     $('#eventId').val(id);
     $.ajax({
@@ -324,6 +377,9 @@ function setEventControl(id) {
             $('#eventType').val(result.event_type).prop("select", true);
             $('#eventTitle').val(result.title);
             $('#eventContents').val(result.contents);
+
+            $('#eventImage > img').attr('src', '/image/'+result.view.file)
+
             $('#l_text').val(result.choices.left);
             $('#r_text').val(result.choices.right);
 
@@ -370,6 +426,7 @@ function setEventControl(id) {
         }
     });
 }
+
 function isEnding(type) {
     if (type == 'link') {
         $('#is_ending').removeAttr('disabled');

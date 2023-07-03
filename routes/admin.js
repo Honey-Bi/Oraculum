@@ -5,6 +5,7 @@ const Main = require('../models/Main');
 const Card = require('../models/Card');
 const bcrypt = require("bcryptjs");
 const fs = require('fs');
+const path = require('path');
 
 const multer = require('multer');
 const storage = multer.diskStorage({
@@ -17,7 +18,7 @@ const storage = multer.diskStorage({
         array[1] = '.' + array[1];
         array.splice(1, 0, Date.now().toString());
         const result = array.join('');
-        console.log(result);
+        console.log(`image upload: ${result}`);
         callback(null, result);
     }
 });
@@ -47,7 +48,7 @@ router.get('/management', admin, async (req, res) => { //관리페이지 뷰
         }
         
         var data = notView = notAddDefault = addDefault = select_list = [],
-            eventList = {};
+            eventList = cardList = {};
 
         let select_type = req.query.select_type;
         var regex = new RegExp("("+req.query.search_text+")");
@@ -90,9 +91,10 @@ router.get('/management', admin, async (req, res) => { //관리페이지 뷰
                     data = await Main.MainEvent.find(query).sort({event_type: -1, event_code:1});
                 }
                 eventList = await Main.MainEvent.find({event_type: 'link'});
+                cardList = await Card.find();
                 break;
             case 'card':
-                select_list = ['all', 'ending', 'npc'];
+                select_list = ['all', 'scene', 'npc'];
                 notView = ['_id']
                 if (select_type !== undefined) {
                     var query = {
@@ -103,7 +105,6 @@ router.get('/management', admin, async (req, res) => { //관리페이지 뷰
                     if (!req.query.search_text) delete query.$or;
                 
                     data = await Card.find(query);
-                    console.log(data);
                 }
                 break;
         }
@@ -116,7 +117,8 @@ router.get('/management', admin, async (req, res) => { //관리페이지 뷰
             search: select_type,
             notAddDefault: notAddDefault,
             addDefault: addDefault,
-            eventList: eventList
+            eventList: eventList,
+            cardList: cardList
         });
 
     } catch (error) {   
@@ -140,7 +142,7 @@ router.post('/deleteOne', admin, async (req, res) => { //유저 및 이벤트 �
         }
 
         if (req.body.type == 'user') {
-            await User.deleteOne({_id: req.body.id})    ;
+            await User.findByIdAndDelete(req.body.id);
             await Main.Main.deleteOne({userId: req.body.id});
         } 
         if(req.body.type == 'event') {
@@ -156,6 +158,20 @@ router.post('/deleteOne', admin, async (req, res) => { //유저 및 이벤트 �
                 await rename.save();
             }
             await Main.MainEvent.findByIdAndDelete(req.body.id)
+        }
+        if (req.body.type == 'card') {
+            const delCard = await Card.findById(req.body.id);
+
+            if (fs.existsSync("views/img/" + delCard.file)) {
+                // 파일이 존재한다면 true 그렇지 않은 경우 false 반환
+                try {
+                    fs.unlinkSync("views/img/" + delCard.file);
+                    console.log("image delete");
+                } catch (error) {
+                    console.log(error);
+                }
+            }
+            await Card.findByIdAndDelete(req.body.id);
         }
 
         return res.status(200).json({
@@ -234,6 +250,7 @@ router.post('/actionEvent', admin, async (req, res) =>  { // 이벤트 변경 �
             event_code: eventCount,
             title: formData.eventTitle,
             contents: formData.eventContents,
+            view: formData.eventCard,
             prerequisites: {
                 over: {
                     fuel: (formData.over_fuel) ? formData.over_fuel : 0,
@@ -295,7 +312,6 @@ router.post('/actionEvent', admin, async (req, res) =>  { // 이벤트 변경 �
         });;
     }
 });
-
 router.post('/actionCard', admin, upload.single('image'), async (req, res) => {
     try {
         const userId = await User.findOne({ _id: req.decoded.user.id }, {access: 1}) ;
@@ -305,26 +321,36 @@ router.post('/actionCard', admin, upload.single('image'), async (req, res) => {
                 message: '권한이 없습니다.',
             });
         }
+
         const formData = req.body;
+
         if (formData.actionType == 'insert') {
+            upload.single('image');
             new Card({
                 type: formData.type,
                 name: formData.name,
-                file: req.file.filename
+                file: req.file.filename.split('.')[0]
             }).save();
         } else if (req.body.actionType == 'update') {
             const card = await Card.findById(formData.id);
-            card.file
-            let file_name = req.file.filename;
-            if (fs.existsSync("view/img" + file_name)) {
-                // 파일이 존재한다면 true 그렇지 않은 경우 false 반환
-                try {
-                    fs.unlinkSync("view/img" + file_name);
-                    console.log("image delete");
-                } catch (error) {
-                    console.log(error);
+
+            card.type = formData.type;
+            card.name = formData.name;
+            
+            if (req.file) {
+                console.log('image 변경');
+                if (fs.existsSync(`views/img/${card.file}.png`)) {
+                    // 파일이 존재한다면 true 그렇지 않은 경우 false 반환
+                    try {
+                        fs.unlinkSync(`views/img/${card.file}.png`);
+                        console.log("image delete");
+                    } catch (error) {
+                        console.log(error);
+                    }
                 }
+                card.file = req.file.filename.split('.')[0];
             }
+            card.save();
         }
         res.redirect(req.headers.referer);
 
@@ -348,10 +374,18 @@ router.get('/getData', admin, async (req, res) => { // 이벤트 가져오는
         }
 
         let data = {};
-        if(req.query.type == 'user') {
-            data = await Main.Main.findOne({userId:req.query.id}).populate('userId');
-        } else if(req.query.type == 'event') {
-            data = await Main.MainEvent.findById(req.query.id);
+        switch (req.query.type) {
+            case 'user':
+                data = await Main.Main.findOne({userId:req.query.id}).populate('userId');
+                break;
+            case 'event':
+                data = await Main.MainEvent.findById(req.query.id).populate('view');
+                break;
+            case 'card':
+                data = await Card.findById(req.query.id);
+                break;
+            default:
+                break;
         }
         
         return res.status(200).send(data);
