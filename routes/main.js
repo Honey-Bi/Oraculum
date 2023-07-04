@@ -48,9 +48,7 @@ router.post('/select', auth, async (req, res) =>{
             stats.technology = 0;
             stats.risk = 0;
         } else if (nextEvent === null) { //정해진 다음 이벤트가 없을경우
-            nextEvent = await Main.MainEvent.find(
-                getQuery('random', stats)
-            );
+            nextEvent = await Main.MainEvent.find(getQuery('random', stats));
             nextEvent = nextEvent[getRandom(nextEvent.length)];
         } 
         
