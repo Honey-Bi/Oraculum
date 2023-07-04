@@ -14,6 +14,10 @@ const CardSchema = new mongoose.Schema({
     file: {
         type: String,
         require: true
+    },
+    extension: {
+        type: String,
+        require: true
     }
 }, {versionKey: false});
 

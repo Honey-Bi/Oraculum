@@ -126,6 +126,6 @@ input[type=number]::-webkit-outer-spin-button {
     overflow: hidden;
     border: 0;
 }
-#cardImage {
+#cardImage, #eventImage> img {
     width: 100%;
 }

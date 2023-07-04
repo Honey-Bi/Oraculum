@@ -60,7 +60,10 @@ function setView() {
                 result.risk
             );
             setSelectView(result.nowEvent.choices.left, result.nowEvent.choices.right);
-            
+            $('#cardImage').attr(
+                'src', 
+                "/image/"+result.nowEvent.view.file + '.' + result.nowEvent.view.extension
+            );
         },
         error: function(request, status, error) {
             console.log(error)
@@ -136,6 +139,7 @@ $('.selectBox').draggable({
     scroll: false,
     // containment : '', //화면 밖으로 이동 가능
     drag : function(){
+        $(this).removeClass('top');
         var pos = $('.selectBox').position(); // 드래그 하는 이미지의 위치값 알아내기
 
         $(this).css({'transform':'rotate('+((pos.left+min2)/40)+'deg)'})
@@ -147,7 +151,6 @@ $('.selectBox').draggable({
     stop : function(){ // 드래그 종료시 실행
         $('.answer').animate({opacity: 0}, 250);  
         var pos = $('.selectBox').position(); 
-        
         var select;
         if (-maxWidth <= pos.left && pos.left <= maxWidth) {
             $(this).animate({ 
@@ -168,7 +171,8 @@ $('.selectBox').draggable({
                 top: 0,
                 opacity: 1
             }, 250, 'easeOutBack');
-        },250);       
+            $(this).addClass('top');
+        },250);
 
         $.ajax({
             method:'POST',                                           
@@ -181,13 +185,9 @@ $('.selectBox').draggable({
             success: function(result){
                 console.log(result);
                 setView();
-                return;
             },
             error: function(error) {
                 console.log(error)
-            },
-            complete: function() {
-
             }
         });
     }

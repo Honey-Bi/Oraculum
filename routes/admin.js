@@ -78,7 +78,7 @@ router.get('/management', admin, async (req, res) => { //관리페이지 뷰
                 break;
             case 'event': // event 정보
                 select_list = ['all', 'random', 'link', 'ending'];
-                notView = ['_id', 'contents', 'next_event', 'rewards', 'choices', 'prerequisites']
+                notView = ['_id', 'contents', 'next_event', 'rewards', 'choices', 'prerequisites', 'view']
 
                 if (select_type !== undefined) {
                     var query = {
@@ -323,13 +323,20 @@ router.post('/actionCard', admin, upload.single('image'), async (req, res) => {
         }
 
         const formData = req.body;
+        let filename = extension = '';
 
+        if (req.file) {
+            files = req.file.filename.split('.')
+            filename = files[0];
+            extension = files[1]
+        }
         if (formData.actionType == 'insert') {
             upload.single('image');
             new Card({
                 type: formData.type,
                 name: formData.name,
-                file: req.file.filename.split('.')[0]
+                file: filename,
+                extension: extension
             }).save();
         } else if (req.body.actionType == 'update') {
             const card = await Card.findById(formData.id);
@@ -348,7 +355,9 @@ router.post('/actionCard', admin, upload.single('image'), async (req, res) => {
                         console.log(error);
                     }
                 }
-                card.file = req.file.filename.split('.')[0];
+                card.file = files[0];
+                card.extension = files[1];
+                
             }
             card.save();
         }

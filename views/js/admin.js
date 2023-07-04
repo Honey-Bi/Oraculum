@@ -12,21 +12,23 @@ $(document).ready(function () {
     }
 });
 
+const allow_extension = ['png', 'gif', 'jpg']
 $("#file").on('change',function(event){
+    
+    var file = event.target.files[0];
+    var extension = file.name.split('.').pop();
+    if (!allow_extension.includes(extension)) {
+        alert("'png', 'gif', 'jpg' 확장자의 파일을 넣어주세요.");
+        return false;
+    }
     var fileName = $("#file").val();
     $(".upload-name").val(fileName);
-
-    var file = event.target.files[0];
-
     var reader = new FileReader(); 
     reader.onload = function(e) {
         $("#cardImage").css('display', 'block');
         $("#cardImage").attr("src", e.target.result);
     }
-
     reader.readAsDataURL(file);
-    // $('#cardImage').attr('')
-
 });
 
 $('#userForm').submit(function(){
@@ -139,7 +141,9 @@ $('.edit_card').click(function() {
         dataType: "json",
         success: function(result) {
             console.log(result);
-            $('#cardImage').attr('src', '/image/'+result.file)
+            $('#cardImage').attr(
+                'src', '/image/'+result.file + '.' + result.extension
+            );
             $('#cardType').val(result.type).prop('selected', true);
             $('#cardName').val(result.name);
         },
@@ -350,14 +354,16 @@ $('#searchForm').submit(function() {
     location.href = location.pathname + '?' + $(this).serialize()
 });
 
-$('#eventCard').change(function(){
-
+$('#eventCardSelect').change(function(){
     $.ajax({
         method: 'get',
         url: "/admin/getData?type=card&id="+$(this).val(),
         dataType: "json",
         success: function (result) {
-            $('#eventImage').attr('str', '/image/'+result.file);
+            console.log(result.file + '.' + result.extension);
+            $('#eventImage > img').attr(
+                'src', '/image/' + result.file + '.' + result.extension
+            );
         }
     });
 
@@ -374,11 +380,14 @@ function setEventControl(id) {
             console.log(result);
             $('#eventType').attr('disabled', true);
             $('#eventCode').val(result.event_code);
-            $('#eventType').val(result.event_type).prop("select", true);
+            $('#eventType').val(result.event_type).prop("selected", true);
             $('#eventTitle').val(result.title);
             $('#eventContents').val(result.contents);
 
-            $('#eventImage > img').attr('src', '/image/'+result.view.file)
+            $('#eventCardSelect').val(result.view._id).prop('selected', true)
+            $('#eventImage > img').attr(
+                'src', '/image/'+ result.view.file + '.' + result.view.extension
+            );
 
             $('#l_text').val(result.choices.left);
             $('#r_text').val(result.choices.right);

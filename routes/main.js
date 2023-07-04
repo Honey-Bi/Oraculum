@@ -75,8 +75,11 @@ router.post('/getView', auth, async (req, res) => {
             risk: 1
         }).populate('nowEvent', {
             contents: 1,
-            choices: 1
-        });
+            choices: 1,
+            view:1
+        })
+        // console.log(main2);
+        // main.view = main2;
         return res.status(200).send(main);
     } catch (error) {
         console.log(error);
