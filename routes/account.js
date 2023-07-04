@@ -68,7 +68,7 @@ router.get('/member', function (req, res) {
             } else {
                 setToken(req, user._id);
             }
-            console.log('네이버 로그인성공');
+            console.log(`${userStatus.dateFormat()} | ${user._id} | 네이버 로그인성공`);
             res.redirect('/');
         } else {
             console.log('error');
@@ -96,7 +96,7 @@ router.post("/login-confirm", async (req, res) => {
     const id = req.body.id, 
           pw = req.body.pw;
     try {
-        let user = await User.findOne({email: id}).or([
+        const user = await User.findOne({email: id}).or([
             {idType: 'basic'},
             {idType: 'test'},
         ])
@@ -107,12 +107,10 @@ router.post("/login-confirm", async (req, res) => {
                 message: '아이디 혹은 비밀번호가 틀림니다.',
             });
         }
-        console.log("id confirm");
 
         bcrypt.compare(pw, user.password, (error, result)=>{  // 기존 로그인 확인 코드
-            if(result) console.log('로그인성공');
+            if(result) console.log(`${userStatus.dateFormat()} | ${user._id} | 로그인성공 `);
             else {
-                console.log('로그인실패: 비번틀림');
                 return res.status(401).json({
                     code: 401,
                     message: '아이디 혹은 비밀번호가 틀림니다.',
@@ -205,7 +203,7 @@ router.post("/register-confirm", async (req, res) => {
     }
 });
 
-router.get('/logout', (req, res) => {
+router.get('/logout', auth, (req, res) => {
     var session = req.session;
     try {
         if (session.token) { //세션정보가 존재하는 경우
@@ -213,7 +211,7 @@ router.get('/logout', (req, res) => {
                 if (err)
                     console.log(err);
                 else {
-                    console.log('SignOut');
+                    console.log(`${userStatus.dateFormat()} | ${req.decoded.user.id} | SignOut `);
                     res.redirect(req.query.callback);
                 }
             })
@@ -246,4 +244,5 @@ function setToken(req, id) {
         { expiresIn: "1h", },   // token의 유효시간을 1시간으로 설정
     );
     req.session.token = token;
+
 }

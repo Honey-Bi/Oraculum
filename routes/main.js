@@ -1,6 +1,7 @@
 const router = require('express').Router();
 const { auth } = require('../middleware/userValidation');
 const Main = require('../models/Main');
+const userStatus = require('../middleware/userStatus')
 
 router.get('/', auth, (req, res) => {
     res.render('./main', {title: 'main', isLogin: true,});
@@ -13,7 +14,7 @@ router.post('/select', auth, async (req, res) =>{
         }).populate('nowEvent');
 
 
-        var rewards, nextEvent;
+        let rewards, nextEvent;
         if (req.body.isLeft == 1) {
             rewards = main.nowEvent.rewards.left;
             nextEvent = main.nowEvent.next_event.left;
@@ -22,7 +23,7 @@ router.post('/select', auth, async (req, res) =>{
             nextEvent = main.nowEvent.next_event.right;
         }
 
-        let stats = {
+        const stats = {
             fuel: main.fuel + rewards.fuel,
             resource:  main.resource + rewards.resource,
             technology: main.technology + rewards.technology,
@@ -37,8 +38,10 @@ router.post('/select', auth, async (req, res) =>{
             nextEvent = await Main.MainEvent.find(
                 getQuery('ending', stats)
             );
-
+                
             nextEvent = nextEvent[getRandom(nextEvent.length)];
+            console.log(`${userStatus.dateFormat()} | ${req.decoded.user.id} | Over | ${nextEvent.title}`);
+            console.log(stats);
 
             stats.fuel = 0;
             stats.resource = 0;
@@ -73,13 +76,14 @@ router.post('/getView', auth, async (req, res) => {
             resource: 1,
             technology: 1,
             risk: 1
-        }).populate('nowEvent', {
-            contents: 1,
-            choices: 1,
-            view:1
-        })
-        // console.log(main2);
-        // main.view = main2;
+        }).populate({
+            path: 'nowEvent', 
+            select: 'contents choices',
+            populate: {
+                path: 'view',
+            }
+        });
+
         return res.status(200).send(main);
     } catch (error) {
         console.log(error);

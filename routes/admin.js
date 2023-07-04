@@ -5,7 +5,6 @@ const Main = require('../models/Main');
 const Card = require('../models/Card');
 const bcrypt = require("bcryptjs");
 const fs = require('fs');
-const path = require('path');
 
 const multer = require('multer');
 const storage = multer.diskStorage({
@@ -93,7 +92,7 @@ router.get('/management', admin, async (req, res) => { //관리페이지 뷰
                 eventList = await Main.MainEvent.find({event_type: 'link'});
                 cardList = await Card.find();
                 break;
-            case 'card':
+            case 'card': // card 정보
                 select_list = ['all', 'scene', 'npc'];
                 notView = ['_id']
                 if (select_type !== undefined) {

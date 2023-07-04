@@ -51,7 +51,7 @@ function setView() {
         async: true,
         dataType: 'json',
         success: function(result){
-            // console.log(result);
+            console.log(result);
             setContentView(result.nowEvent.contents);
             setStatsView(
                 result.fuel, 
@@ -60,6 +60,11 @@ function setView() {
                 result.risk
             );
             setSelectView(result.nowEvent.choices.left, result.nowEvent.choices.right);
+            if(result.nowEvent.view.type == 'npc') {
+                $('#npcName').text(result.nowEvent.view.name);
+            } else {
+                $('#npcName').text('');
+            }
             $('#cardImage').attr(
                 'src', 
                 "/image/"+result.nowEvent.view.file + '.' + result.nowEvent.view.extension
