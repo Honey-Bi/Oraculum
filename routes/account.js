@@ -214,7 +214,7 @@ router.get('/logout', auth, (req, res) => {
                     console.log(`${userStatus.dateFormat()} | ${req.decoded.user.id} | SignOut `);
                     res.redirect(req.query.callback);
                 }
-            })
+            });
         } else {
             res.redirect('/');
         }
@@ -222,7 +222,28 @@ router.get('/logout', auth, (req, res) => {
     catch (e) {
         console.log(e)
     }
-})
+});
+
+router.get('/logout-timeout', auth, (req, res) => {
+    var session = req.session;
+    try {
+        if (session.token) { //세션정보가 존재하는 경우
+            req.session.destroy(function (err) {
+                if (err)
+                    console.log(err);
+                else {
+                    console.log(`${userStatus.dateFormat()} | ${req.decoded.user.id} | SignOut `);
+                    res.redirect('/');
+                }
+            });
+        } else {
+            res.redirect('/');
+        }
+    }
+    catch (e) {
+        console.log(e)
+    }
+});
 
 router.get('/pw-forgot', (req, res) => {
     res.render('./account/forgotPw', {
@@ -243,7 +264,7 @@ function setToken(req, id) {
     token = jwt.sign(
         payload,                // token으로 변환할 데이터
         SECRET_KEY,             // secret key 값
-        { expiresIn: 1, },   // token의 유효시간을 1시간으로 설정
+        { expiresIn: "1h", },   // token의 유효시간을 1시간으로 설정
     );
     req.session.token = token;
 
