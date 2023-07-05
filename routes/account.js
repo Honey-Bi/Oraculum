@@ -264,7 +264,7 @@ function setToken(req, id) {
     token = jwt.sign(
         payload,                // token으로 변환할 데이터
         SECRET_KEY,             // secret key 값
-        { expiresIn: "1h", },   // token의 유효시간을 1시간으로 설정
+        { expiresIn: "12h", },   // token의 유효시간을 12시간으로 설정
     );
     req.session.token = token;
 
