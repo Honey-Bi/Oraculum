@@ -189,15 +189,13 @@ jQuery.fn.serializeObject = function() {
 };
 
 $('#eventForm').submit(function() {
-    // console.log($(this).serializeObject());
+    event_data = $(this).serializeObject();
+    event_data.actionType = actionType;
+    event_data.is_ending = $('#is_ending').val();
     $.ajax({
         method:'POST',                                           
         url: '/admin/actionEvent',
-        data: {
-            formData: $(this).serializeObject(),
-            actionType: actionType,
-            is_ending: $('#is_ending').val()
-        },
+        data: event_data,
         dataType: "json",
         success: function (result) {
             alert('code: ' + result.code + '\n' + result.message);
@@ -216,9 +214,7 @@ $('#updateUserForm').submit(function() {
     $.ajax({
         method:'POST',                                           
         url: '/admin/updateUser',
-        data: {
-            formData: $(this).serializeObject()
-        },
+        data: $(this).serializeObject(),
         dataType: "json",
         success: function (result) {
             alert('code: ' + result.code + '\n' + result.message);
@@ -246,7 +242,6 @@ $('.edit_user').click(function() {
         url: "/admin/getData?type=user&id="+$(this).val(),
         dataType: "json",
         success: function(result) {
-            $('#userId').val(result.userId._id);
             $('#update_pw').attr('disabled', true);
             $('#changePw').removeAttr('disabled')
             $('#update_name').val(result.userId.name);

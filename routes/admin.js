@@ -197,25 +197,24 @@ router.post('/updateUser', admin, async (req, res) => {
                 message: '권한이 없습니다.',
             });
         }
-        const formData = req.body.formData;
-        const mainData = {
-            fuel: formData.fuel,
-            resource: formData.resource,
-            technology: formData.technology,
-            risk: formData.risk,
-            nowEvent: formData.update_nowEvent
-        };
-        let userData = {
-            name: formData.update_name,
-        };
+        const formData = req.body;
+
+        const user = await Main.Main.findOne({userId: formData.id}).populate('userId');
+
+        user.fuel = formData.fuel;
+        user.resource = formData.resource;
+        user.technology = formData.technology;
+        user.risk = formData.risk;
+        user.nowEvent = formData.update_nowEvent;
+        user.userId.name = formData.update_name;
 
         if (formData.update_pw) {
+
             const salt = await bcrypt.genSalt(10);
-            userData['password'] = await bcrypt.hash(formData.update_pw, salt);;
+            user.userId.password = await bcrypt.hash(formData.update_pw, salt);
         } 
 
-        await new Main.Main.findByIdAndUpdate(formData.id, {$set: {mainData}});
-        await new User.findByIdAndUpdate(formData.userId, {$set: {userData}});
+        user.save();
 
         return res.status(200).json({
             code: 200,
@@ -240,9 +239,8 @@ router.post('/actionEvent', admin, async (req, res) =>  { // 이벤트 변경 �
             });
         }
         
-        const formData = req.body.formData;
+        const formData = req.body;
         
-        console.log(formData.eventType);
         const eventCount = (req.body.actionType == 'update') ? formData.eventCode : await Main.MainEvent.find({event_type: formData.eventType}).count();
 
         let data = {
