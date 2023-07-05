@@ -10,9 +10,9 @@ const userStatus = require('./middleware/userStatus');
 const connectDB = require("./config/db");
 connectDB();
 
-app.set('view engine','ejs');
+// view engine setup
 app.set('views', path.join(__dirname, 'views'));
-
+app.set('view engine','ejs');
 
 app.use('/img', express.static(path.join(__dirname, '/views/img')));
 app.use('/css', express.static(path.join(__dirname, '/views/css')));
