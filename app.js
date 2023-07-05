@@ -2,7 +2,7 @@ const path = require('path');
 const express = require("express");
 const cookieParser = require('cookie-parser');
 const expressSession = require('express-session');
-var logger = require('morgan');
+const morgan = require('morgan');
 const bodyParser = require('body-parser');
 const app = express();
 
@@ -18,7 +18,13 @@ app.use('/img', express.static(path.join(__dirname, '/views/img')));
 app.use('/css', express.static(path.join(__dirname, '/views/css')));
 app.use('/js', express.static(path.join(__dirname, '/views/js')));
 
-app.use(logger('dev'));
+app.use(morgan('dev'));
+
+if (process.env.NODE_ENV === 'production') { 
+  app.use(morgan('combined')); // 배포환경일때
+} else {
+  app.use(morgan('dev')); // 개발환경일때
+}
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));

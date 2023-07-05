@@ -203,9 +203,6 @@ $('#eventForm').submit(function() {
         error: function(result, status, error) {
             return alert('code: ' + status+'\n' + error);
         },
-        complete : function() {
-            location.reload();
-        }
     });
 });
 

@@ -215,6 +215,8 @@ router.get('/logout', auth, (req, res) => {
                     res.redirect(req.query.callback);
                 }
             })
+        } else {
+            res.redirect('/');
         }
     }
     catch (e) {

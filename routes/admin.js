@@ -239,7 +239,7 @@ router.post('/actionEvent', admin, async (req, res) =>  { // 이벤트 변경 �
             });
         }
         
-        const formData = req.body;
+        const formData = req.body.formData;
         
         const eventCount = (req.body.actionType == 'update') ? formData.eventCode : await Main.MainEvent.find({event_type: formData.eventType}).count();
 
