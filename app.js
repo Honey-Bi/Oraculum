@@ -2,6 +2,7 @@ const path = require('path');
 const express = require("express");
 const cookieParser = require('cookie-parser');
 const expressSession = require('express-session');
+var logger = require('morgan');
 const bodyParser = require('body-parser');
 const app = express();
 
@@ -17,8 +18,13 @@ app.use('/img', express.static(path.join(__dirname, '/views/img')));
 app.use('/css', express.static(path.join(__dirname, '/views/css')));
 app.use('/js', express.static(path.join(__dirname, '/views/js')));
 
-app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({ extended: true }));
+app.use(logger('dev'));
+
+app.use(express.json());
+app.use(express.urlencoded({ extended: false }));
+// app.use(bodyParser.json());
+// app.use(bodyParser.urlencoded({ extended: true }));
+
 app.use(cookieParser());
 app.use(expressSession({
   secret: 'my key',
@@ -45,7 +51,9 @@ app.all('*', (req,res) => {
 })
 
 
-app.listen(8080, (err) => {
-  if (err) return console.log(err);
-  console.log("The server is listening on port 8080");
-});
+// app.listen(8080, (err) => {
+//   if (err) return console.log(err);
+//   console.log("The server is listening on port 8080");
+// });
+
+module.exports = app;
