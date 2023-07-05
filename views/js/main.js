@@ -51,7 +51,7 @@ function setView() {
         async: true,
         dataType: 'json',
         success: function(result){
-            console.log(result);
+            // console.log(result);
             setContentView(result.nowEvent.contents);
             setStatsView(
                 result.fuel, 
@@ -188,7 +188,7 @@ $('.selectBox').draggable({
             },
             dataType: 'json',
             success: function(result){
-                console.log(result);
+                // console.log(result);
                 setView();
             },
             error: function(error) {

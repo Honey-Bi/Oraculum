@@ -355,7 +355,7 @@ $('#eventCardSelect').change(function(){
         url: "/admin/getData?type=card&id="+$(this).val(),
         dataType: "json",
         success: function (result) {
-            console.log(result.file + '.' + result.extension);
+            // console.log(result.file + '.' + result.extension);
             $('#eventImage > img').attr(
                 'src', '/image/' + result.file + '.' + result.extension
             );
@@ -372,7 +372,7 @@ function setEventControl(id) {
         dataType: "json",
         async : false,
         success: function(result) {
-            console.log(result);
+            // console.log(result);
             $('#eventType').attr('disabled', true);
             $('#eventCode').val(result.event_code);
             $('#eventType').val(result.event_type).prop("selected", true);
