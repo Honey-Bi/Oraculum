@@ -1,4 +1,10 @@
 {
+  "name": "myapp",
+  "version": "0.0.0",
+  "private": true,
+  "scripts": {
+  "start": "node ./app"
+  },
   "dependencies": {
     "bcryptjs": "^2.4.3",
     "body-parser": "^1.20.2",
