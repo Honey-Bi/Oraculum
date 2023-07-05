@@ -14,8 +14,7 @@ exports.auth = (req, res, next) => {
         // 유효시간이 초과된 경우
         if (error.name === 'TokenExpiredError') {
             res.write("<script>alert('code: 419, message: login time over. retry sign in'); location.href='/account/logout'</script>");
-            res.write("<script>window.location=\"/account/logout\"</script>");
-            return res.redirect('/account/logout');
+            return res.write("<script>window.location=\"/account/logout\"</script>");
             // return res.status(419).json({
                 
             // });
