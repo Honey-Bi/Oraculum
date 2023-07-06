@@ -16,20 +16,18 @@ exports.auth = async (req, res, next) => {
     catch (error) {
         // access_token 유효시간이 초과된 경우
         if (error.name === 'TokenExpiredError') { 
-            console.log('access_token 유효시간 초과');
             req.decoded = jwt.decode(req.session.token);
             const user = await User.findById(req.decoded.user.id);
+            console.log(`${userStatus.dateFormat()} | ${user._id} | access_token 유효시간 초과`)
             try {
                 const token = jwt.verify(user.refresh_token, SECRET_KEY);
                 userStatus.setAccessToken(req, req.decoded.user.id);
             } catch (error) {
-                console.log('refresh_token 유효시간이 초과');
-
-                const user = await User.findById(req.decoded.user.id)
+                // refresh_token 유효시간이 초과또는 비밀키가 일치하지 않는 경우
+                console.log(`${userStatus.dateFormat()} | ${user._id} | refresh_token 유효시간 초과`)
                 user.refresh_token = null;
                 user.save();
                 req.session.destroy();
-                // refresh_token 유효시간이 초과또는 비밀키가 일치하지 않는 경우
                 return res.redirect("/account/login");
             }
             return next();
