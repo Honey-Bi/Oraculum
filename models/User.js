@@ -33,7 +33,12 @@ const UserSchema = new mongoose.Schema({
     type: String,
     enum: ['basic', 'naver', 'kakao', 'test'],
     required: true
+  },
+  refresh_token: {
+    type: String,
+    default: null
   }
+
 }, {versionKey: false});
 
 // model을 export 해주기

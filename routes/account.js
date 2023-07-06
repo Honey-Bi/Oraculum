@@ -4,10 +4,8 @@ const userStatus = require('../middleware/userStatus');
 const bcrypt = require("bcryptjs");
 const User = require('../models/User'); 
 const Main = require('../models/Main'); 
-const jwt = require('jsonwebtoken');
 const config = require('../config/default.json');
 
-const SECRET_KEY = config.jwtSecretKey;
 const client_id = config.naver.client_id;
 const client_secret = config.naver.client_secret;
 const redirectURI = config.naver.redirectURI;
@@ -64,9 +62,12 @@ router.get('/member', function (req, res) {
                     userId: newUser,
                     nowEvent: eventId,
                 }).save();
-                setToken(req, newUser._id);
+
+                userStatus.setAccessToken(req, newUser._id);
+                userStatus.setRefreshToken(newUser._id);
             } else {
-                setToken(req, user._id);
+                userStatus.setAccessToken(req, user._id);
+                userStatus.setRefreshToken(user._id);
             }
             console.log(`${userStatus.dateFormat()} | ${user._id} | 네이버 로그인성공`);
             res.redirect('/');
@@ -114,10 +115,12 @@ router.post("/login-confirm", async (req, res) => {
                 return res.status(401).json({
                     code: 401,
                     message: '아이디 혹은 비밀번호가 틀림니다.',
-                });;
+                });
             }
 
-            setToken(req, user._id);
+            userStatus.setAccessToken(req, user._id);
+            userStatus.setRefreshToken(user._id);
+
             return res.status(200).json({
                 code: 200,
                 message: '토큰이 발급되었습니다.',
@@ -169,7 +172,7 @@ router.post("/register-confirm", async (req, res) => {
         // email-confirm 처리를 통해 먼저 확인하기에 주석처리함
               
         // user에 name, email, password 값 할당        
-        let newUser = new User({
+        const newUser = new User({
             name: name,
             email: email,
             password: password,
@@ -193,7 +196,8 @@ router.post("/register-confirm", async (req, res) => {
         }).save();
 
         if (req.body.idType != 'test') {
-            setToken(req, newUser._id);
+            userStatus.setAccessToken(req, newUser._id);
+            userStatus.setRefreshToken(newUser._id);
         }
 
         res.send(true);
@@ -203,21 +207,19 @@ router.post("/register-confirm", async (req, res) => {
     }
 });
 
-router.get('/logout', auth, (req, res) => {
-    var session = req.session;
+router.get('/logout', auth, async (req, res) => {
+    const user = await User.findById(req.decoded.user.id)
+    user.refresh_token = null;
+    user.save();
     try {
-        if (session.token) { //세션정보가 존재하는 경우
-            req.session.destroy(function (err) {
-                if (err)
-                    console.log(err);
-                else {
-                    console.log(`${userStatus.dateFormat()} | ${req.decoded.user.id} | SignOut `);
-                    res.redirect(req.query.callback);
-                }
-            });
-        } else {
-            res.redirect('/');
-        }
+        req.session.destroy(function (err) {
+            if (err)
+                console.log(err);
+            else {
+                console.log(`${userStatus.dateFormat()} | ${req.decoded.user.id} | SignOut `);
+                res.redirect(req.query.callback);
+            }
+        });
     }
     catch (e) {
         console.log(e)
@@ -253,19 +255,3 @@ router.get('/pw-forgot', (req, res) => {
 });
 
 module.exports = router;
-
-function setToken(req, id) {
-    const payload = {
-        type: 'JWT',
-        user: {
-            id: id,
-        },
-    };
-    token = jwt.sign(
-        payload,                // token으로 변환할 데이터
-        SECRET_KEY,             // secret key 값
-        { expiresIn: "12h", },   // token의 유효시간을 12시간으로 설정
-    );
-    req.session.token = token;
-
-}
