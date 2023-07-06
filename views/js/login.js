@@ -31,14 +31,14 @@ $('#loginForm').submit(function(){
         },
         dataType: 'json',
         success: function(result){
-            console.log("login");
+            // console.log("login");
             // sessionStorage.removeItem('token');
             // document.cookie = "token="+result.token;
             location.href = '/';
             return;
         },
         error: function(error) {
-            console.log(error)
+            // console.log(error)
             var err = $('.err-text').text("아이디 또는 비밀번호를 잘못 입력했습니다.\n입력하신 내용을 다시 확인해주세요.");
             err.html(err.html().replace(/\n/g, '<br/>'));
             $('.err-text').css('color', '#ff3f3f');

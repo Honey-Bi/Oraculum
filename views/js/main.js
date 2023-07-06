@@ -171,6 +171,22 @@ $('.selectBox').draggable({
 
         $(this).animate({top: 100, opacity: 0}, 250);
         setTimeout(() =>{
+            $.ajax({
+                method:'POST',                                           
+                url:'/main/select',
+                async: false,
+                data: {
+                    isLeft: select*1,
+                },
+                dataType: 'json',
+                success: function(result){
+                    // console.log(result);
+                    setView();
+                },
+                error: function(error) {
+                    console.log(error)
+                }
+            });
             $(this).css({left: 0,'transform': "rotate(0deg)"});
             $(this).animate({
                 top: 0,
@@ -179,21 +195,5 @@ $('.selectBox').draggable({
             $(this).addClass('top');
         },250);
 
-        $.ajax({
-            method:'POST',                                           
-            url:'/main/select',
-            async: true,
-            data: {
-                isLeft: select*1,
-            },
-            dataType: 'json',
-            success: function(result){
-                // console.log(result);
-                setView();
-            },
-            error: function(error) {
-                console.log(error)
-            }
-        });
     }
 });
