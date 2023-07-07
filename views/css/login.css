@@ -102,3 +102,6 @@ input:focus {
     left: 0;
     margin-right: -50%;
 }
+.card {
+    background-color: rgba(52, 58, 64, 0.2) !important;
+}

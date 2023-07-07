@@ -5,11 +5,14 @@
     <link rel="stylesheet" href="/css/login.css">
 </head>
 <body>
+    <div class="canvas">
+        <canvas id="canvas"></canvas>
+    </div>
     <div class="container h-100">
         <%- include('../header'); %>
         <div class="row d-flex justify-content-center align-items-center h-100">
             <div class="col-12 col-md-8 col-lg-8 col-xl-8">
-                <div class="card bg-dark text-white" style="border-radius: 1rem;">
+                <div class="card text-white" style="border-radius: 1rem;">
                     <div class="card-body p-5 text-center">
                         <div class="mb-md-5 mt-md-4 pb-5">
                             <h2 class="fw-bold mb-2 text-uppercase">Login</h2>
@@ -24,7 +27,7 @@
                                     <label class="form-label" for="typePasswordX">Password</label>
                                     <p class="err-text"> err text </p>
                                 </div>
-                                <p class="small mb-4"><a class="text-white-50" href="/account/pw-forgot">Forgot password?</a></p>
+                                <p class="small mb-4"><a class="text-white-50" href="/account/passwordForget">Forgot password?</a></p>
                                 <button class="btn btn-outline-light btn-lg px-5" type="submit" id="loginBtn">Login</button>
                             </form>
                             <div class="hr-label">

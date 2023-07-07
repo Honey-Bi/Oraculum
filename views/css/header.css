@@ -4,6 +4,8 @@ body {
     display: flex;
     color: #fff;
     background-color: rgba(33, 37, 41, 1);
+    overflow-x: hidden;
+    overflow-y: auto;
 }
 .container {
     max-width: 42em;
@@ -71,4 +73,8 @@ nav {
 }
 .text-end {
     float: right;
+}
+.canvas {
+    position: absolute;
+    z-index: -1;
 }
