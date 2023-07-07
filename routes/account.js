@@ -5,10 +5,12 @@ const bcrypt = require("bcryptjs");
 const User = require('../models/User'); 
 const Main = require('../models/Main'); 
 const config = require('../config/default.json');
+const nodemailer = require("nodemailer");
 
 const client_id = config.naver.client_id;
 const client_secret = config.naver.client_secret;
 const redirectURI = config.naver.redirectURI;
+const GOOGLE_PASS = config.google.pass;
 
 router.get('/callback', function (req, res) {
     code = req.query    .code;
@@ -226,32 +228,51 @@ router.get('/logout', auth, async (req, res) => {
     }
 });
 
-router.get('/logout-timeout', auth, (req, res) => {
-    var session = req.session;
-    try {
-        if (session.token) { //세션정보가 존재하는 경우
-            req.session.destroy(function (err) {
-                if (err)
-                    console.log(err);
-                else {
-                    console.log(`${userStatus.dateFormat()} | ${req.decoded.user.id} | SignOut `);
-                    res.redirect('/');
-                }
-            });
-        } else {
-            res.redirect('/');
-        }
-    }
-    catch (e) {
-        console.log(e)
-    }
-});
-
-router.get('/pw-forgot', (req, res) => {
+router.get('/passwordForget', (req, res) => {
     res.render('./account/forgotPw', {
         title: 'Forgot PassWord',
         isLogin: userStatus.isLogin(req)
     })
 });
+
+
+// const transport = nodemailer.createTransport({
+//     service: "Gmail",
+//     auth: {
+//         user: "hyunbi14@gmail.com",
+//         pass: GOOGLE_PASS,
+//     },
+// });
+
+// const message = {
+//     from: "hyunbi14@gmail.com",
+//     to: "biten10@naver.com",
+//     subject: "test",
+//     text: "test_text",
+// };
+// router.post('/passwordReset', async (req,res)=> {
+       
+//     transport.sendMail(message, (err, info) => {
+//         if (err) {
+//             console.error("err", err);
+//             return;
+//         }
+//         console.log("ok", info);
+//     });
+//     // const data = await User.findOne({email: req.body.email});
+
+//     // if(data) {
+//     //     if(data.idType == 'basic'){
+//     //         console.log(data.email);
+//     //         console.log('email 발송');
+//     //     } else {
+//     //         console.log('소셜로그인');
+//     //     }
+//     // } else {
+//     //     console.log('data 없음');
+//     //     res.redirect(req.referrer);
+//     // }
+
+// });
 
 module.exports = router;

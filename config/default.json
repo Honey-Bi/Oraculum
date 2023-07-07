@@ -5,5 +5,8 @@
         "client_id": "SWZfFK0rmZ2YiDNmp4pz",
         "client_secret": "yh8jT_bWBy",
         "redirectURI": "https://port-0-oraculum-k19y2kljp1v7t6.sel4.cloudtype.app/account/callback"
+    },
+    "google": {
+        "pass": "zrxcgluedrxchxlr"
     }
 }
