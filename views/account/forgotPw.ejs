@@ -2,28 +2,31 @@
 <html lang="ko">
 <head>
     <%- include('../head'); %>   
-    <link rel="stylesheet" href="">
+    <link rel="stylesheet" href="/css/login.css">
 </head>
 <body>
+    <div class="canvas">
+        <canvas id="canvas"></canvas>
+    </div>
     <div class="container h-100">
         <%- include('../header'); %>
         <div class="row d-flex justify-content-center align-items-center h-100">
             <div class="col-12 col-md-8 col-lg-8 col-xl-8">
-                <div class="card bg-dark text-white" style="border-radius: 1rem;">
+                <div class="card text-white" style="border-radius: 1rem;">
                     <div class="card-body p-5 text-center">
                         <div class="mb-md-5 mt-md-4 pb-5">
                             <h2 class="fw-bold mb-2 text-uppercase">Forgot Password</h2>
                             <p class="text-white-50 mb-4">Please enter your Email</p>
-                            <form id="loginForm" onsubmit="return false;">
+                            <form action="/acction/passwordReset" method="post">
                                 <div class="form-outline form-white mb-4">
-                                    <input type="email" id="typeEmailX" autofocus class="form-control form-control-lg" autocomplete="off" required/>
-                                    <label class="form-label" for="typeEmailX">Email</label>
+                                    <input type="text" name="email" autofocus class="form-control form-control-lg" autocomplete="off" required/>
+                                    <label class="form-label" for="email">Email</label>
                                 </div>
                                 <button class="btn btn-outline-light btn-lg px-5" type="submit" id="sendBtn">Send</button>
                             </form>
                         </div>
                         <div>
-                            <p class="small mb-0">Don't remember email? <a href="/account/id-forgot" class="text-white-50 fw-bold">Forgot Email</a></p>
+                            <p class="small mb-0">Don't remember email? <a href="#" class="text-white-50 fw-bold">Forgot Email</a></p>
                         </div>
                     </div>
                 </div>
