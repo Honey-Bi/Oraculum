@@ -55,7 +55,7 @@ router.get('/management', admin, async (req, res) => { //관리페이지 뷰
             case 'user': // user 정보
                 select_list = ['all', 'basic', 'naver', 'kakao', 'test']
                 notAddDefault = ['_id', 'created', 'tryCount','access', 'idType'];
-                notView = ['_id', 'userId','nowEvent', 'created'];
+                notView = ['_id', 'userId','nowEvent', 'created', 'refresh_token'];
                 addDefault = ['password'];
 
                 if (select_type !== undefined) {
