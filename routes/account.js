@@ -218,7 +218,7 @@ router.get('/logout', auth, async (req, res) => {
             if (err)
                 console.log(err);
             else {
-                console.log(`${userStatus.dateFormat()} | ${req.decoded.user.id} | SignOut `);
+                console.log(`${userStatus.dateFormate()} | ${req.decoded.user.id} | SignOut `);
                 res.redirect(req.query.callback);
             }
         });
@@ -257,22 +257,21 @@ router.get('/passwordForget', (req, res) => {
 //             console.error("err", err);
 //             return;
 //         }
-//         console.log("ok", info);
 //     });
-//     // const data = await User.findOne({email: req.body.email});
 
-//     // if(data) {
-//     //     if(data.idType == 'basic'){
-//     //         console.log(data.email);
-//     //         console.log('email 발송');
-//     //     } else {
-//     //         console.log('소셜로그인');
-//     //     }
-//     // } else {
-//     //     console.log('data 없음');
-//     //     res.redirect(req.referrer);
-//     // }
+//     const data = await User.findOne({email: req.body.email});
 
+//     if(data) {
+//         if(data.idType == 'basic'){
+//             console.log(data.email);
+//             console.log('email 발송');
+//         } else {
+//             console.log('소셜로그인');
+//         }
+//     } else {
+//         console.log('data 없음');
+//         res.redirect(req.referrer);
+//     }
 // });
 
 module.exports = router;

@@ -8,6 +8,7 @@ body {
     /* color: #ff3f3f; */
     color: #343a40;
     font-size: 14px;
+    /* display: none; */
     margin: 0;
 }
 .err-text-register {
